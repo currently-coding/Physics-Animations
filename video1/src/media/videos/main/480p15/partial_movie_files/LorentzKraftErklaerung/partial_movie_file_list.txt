@@ -1,0 +1,7 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzKraftErklaerung/1185818338_492109274_223132457.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzKraftErklaerung/624642324_1549382751_449575604.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzKraftErklaerung/624642324_382030995_3476092125.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzKraftErklaerung/624642324_3484619224_825378344.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzKraftErklaerung/624642324_1141282389_2671096899.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzKraftErklaerung/624642324_171698166_422933461.mp4'
