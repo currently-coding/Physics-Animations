@@ -92,6 +92,7 @@ class AttractionRepulsion(m.Scene):
                 lag_ratio=0,
             ),
         )
+        self.wait(3)
         self.play(
             m.AnimationGroup(
                 img1.animate.rotate(m.PI / 2),
