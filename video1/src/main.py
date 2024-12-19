@@ -4,7 +4,7 @@ class LorentzKraftVideo(Scene):
     def construct(self):
         # Titel der Präsentation
         title = Text("Die Lorentzkraft", font_size=72)
-        subtitle = Text("erklärt am elektrohydrodynamischen Antrieb", font_size=36)
+        subtitle = Text("erklärt am magnetohydrodynamischen Antrieb", font_size=36)
         subtitle.next_to(title, DOWN)
         title_group = VGroup(title, subtitle)
         
