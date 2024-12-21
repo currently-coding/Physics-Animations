@@ -1,3 +1,4 @@
 video1/src/__pycache__/
-video1/src/media/
 .vscode/
+venv/
+myenv/

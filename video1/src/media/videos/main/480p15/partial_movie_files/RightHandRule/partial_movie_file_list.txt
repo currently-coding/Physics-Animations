@@ -1,0 +1,10 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/1185818338_1900149787_223132457.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/624642324_4290733026_2144709222.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/624642324_1224475428_2526600705.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/624642324_2368339319_2499094617.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/624642324_3845196752_157056619.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/624642324_2018835165_2132446551.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/624642324_1704852926_1120677752.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/624642324_3534716537_3418172799.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/RightHandRule/624642324_3192181777_2819942750.mp4'

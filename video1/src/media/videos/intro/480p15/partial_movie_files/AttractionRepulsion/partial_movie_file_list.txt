@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/intro/480p15/partial_movie_files/AttractionRepulsion/1185818338_1121829098_3575290264.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/intro/480p15/partial_movie_files/AttractionRepulsion/624642324_1591253891_3379228113.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/intro/480p15/partial_movie_files/AttractionRepulsion/624642324_255102487_1205369432.mp4'

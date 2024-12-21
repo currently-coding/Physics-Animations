@@ -144,48 +144,54 @@ class LorentzKraftVideo(Scene):
         self.lorentz_particle(charge=1.0, velocity=2.0)
 
     def lorentz_particle(self, charge, velocity, B_strength=1.2, angle_degrees=45):
+        # -------- PARAMETERS (adjust here) --------
+        charge = 1.0          # Particle charge (positive or negative)
+        velocity = 2.0        # Velocity magnitude
+        B_strength = 1.2      # Magnetic field strength
+        angle_degrees = 45    # Angle in degrees
+        
         # -------- SETUP --------
-        angle = angle_degrees * DEGREES  # Umrechnung in Radianten
+        angle = angle_degrees * DEGREES  # Convert to radians
         force = charge * velocity * B_strength # * sin(90)
         
-        # -------- MAGNETFELD --------
+        # -------- MAGNETIC FIELD --------
         B_field = VGroup(*[
             Text("×", font_size=24)
             for _ in range(64)
         ]).arrange_in_grid(8, 8, buff=0.7)
         B_field.set_color(BLUE)
         
-        # -------- TEILCHEN --------
+        # -------- PARTICLE --------
         particle = Dot(color=RED if charge > 0 else BLUE)
         
-        # -------- BESCHRIFTUNGEN --------
-        B_label = Tex(r"$\vec{B}$").set_color(BLUE).next_to(B_field, UP, buff=0.2)  # B-Vektor über dem Feld
+        # -------- LABELS --------
+        B_label = Tex(r"$\vec{B}$").set_color(BLUE).next_to(B_field, UP, buff=0.2)  # B vector above field
         q_label = Tex(f"q = {charge} e").set_color(RED if charge > 0 else BLUE)
         v_label = Tex(r"$v = " + str(velocity) + r"\,\mathrm{\frac{m}{s}}$").set_color(GREEN)
         
-        # Positionierung der Labels
+        # Label positioning
         q_label.to_corner(UL)
         v_label.next_to(q_label, DOWN)
         
-        # -------- BAHNBERECHNUNG --------
+        # -------- TRAJECTORY CALCULATION --------
         radius = abs(velocity * charge / B_strength)
         center_offset = radius * np.array([-np.sin(angle), np.cos(angle), 0])
         
-        # Zeit für genau eine Rotation
-        omega = velocity / radius  # Kreisfrequenz
-        t_max = 2 * np.pi / omega  # Zeit für eine volle Rotation
+        # Time for exactly one rotation
+        omega = velocity / radius  # Angular frequency
+        t_max = 2 * np.pi / omega  # Time for one full rotation
         
-        # Kreis erstellen und rotieren
+        # Create and rotate circle
         circle = Circle(radius=radius, color=YELLOW).move_to(center_offset)
-        circle.rotate(-angle, about_point=center_offset)  # Rotation um 90° (oder einen anderen Winkel)
+        circle.rotate(-angle, about_point=center_offset)
         circle.set_stroke(opacity=0.3)
         
-        # -------- KRAFTVEKTOR --------
-        # Skalierungsfaktoren
+        # -------- FORCE VECTOR --------
+        # Scaling factors
         force_scale = 0.5
         velocity_scale = 0.5
         
-        # Standardwerte für alle Pfeile
+        # Standard values for all arrows
         arrow_kwargs = {
             "tip_length": 0.4,  # Same tip size for all arrows
             "max_tip_length_to_length_ratio": 0.4
@@ -207,26 +213,26 @@ class LorentzKraftVideo(Scene):
         )
         
         def update_force_vector(arrow):
-            # Berechne neue Start- und Endpunkte
+            # Calculate new start and end points
             start = particle.get_center()
             direction = center_offset - start
             direction = direction / np.linalg.norm(direction) * force * force_scale
-            # Aktualisiere den existierenden Pfeil
+            # Update existing arrow
             arrow.put_start_and_end_on(
                 start,
                 start + direction
             )
             
         def update_velocity_vector(arrow):
-            # Berechne neue Start- und Endpunkte
+            # Calculate new start and end points
             start = particle.get_center()
-            # Vektor vom Kreismittelpunkt zum Teilchen
+            # Vector from circle center to particle
             radial = start - center_offset
-            # Tangentialvektor (90° gedreht)
-            tangent = np.array([-radial[1], radial[0], 0])  # Rotation um 90°
-            # Normieren und skalieren
+            # Tangential vector (90° rotation)
+            tangent = np.array([-radial[1], radial[0], 0])
+            # Normalize and scale
             tangent = tangent / np.linalg.norm(tangent) * velocity * velocity_scale
-            # Aktualisiere den existierenden Pfeil
+            # Update existing arrow
             arrow.put_start_and_end_on(
                 start,
                 start + tangent

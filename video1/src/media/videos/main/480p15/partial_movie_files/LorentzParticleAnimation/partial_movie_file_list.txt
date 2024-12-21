@@ -1,0 +1,6 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzParticleAnimation/1185818338_958163131_223132457.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzParticleAnimation/624642324_1704852926_1530327261.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzParticleAnimation/624642324_124189673_171726009.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzParticleAnimation/624642324_1704852926_2442576713.mp4'
+file 'file:/home/philip/Github/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/LorentzParticleAnimation/624642324_32507221_2642092498.mp4'
