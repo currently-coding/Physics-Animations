@@ -1,10 +1,11 @@
-from manim import Scene, Text, MathTex, VGroup, Write, config, UP, DOWN, FadeOut, Tex, SVGMobject, Vector, LEFT, RIGHT, GREEN, BLUE, RED, UL, DL, FadeIn, UR, ORIGIN, TransformMatchingTex, Arrow, Create, Transform
+from manim import Scene, Text, MathTex, VGroup, Write, config, UP, DOWN, FadeOut, Tex, SVGMobject, Vector, LEFT, RIGHT, GREEN, BLUE, RED, UL, DL, FadeIn, UR, ORIGIN, TransformMatchingTex, Arrow, Create, Transform, Dot, VMobject, MoveAlongPath, DEGREES, YELLOW, ArrowSquareTip, linear, Circle, PI
+import numpy as np
 
 class LorentzKraftVideo(Scene):
     def construct(self):
         # Titel der Präsentation
         title = Text("Die Lorentzkraft", font_size=72)
-        subtitle = Text("erklärt am elektrohydrodynamischen Antrieb", font_size=36)
+        subtitle = Text("erklärt am magnetohydrodynamischen Antrieb", font_size=36)
         subtitle.next_to(title, DOWN)
         title_group = VGroup(title, subtitle)
         
@@ -137,4 +138,127 @@ class LorentzKraftVideo(Scene):
         self.play(Write(text_group))
         self.wait(3)
 
-        self.play(FadeOut(eqn1), FadeOut(text_group))
+        self.play(FadeOut(eqn), FadeOut(text_group))
+
+        self.lorentz_particle(charge=1.0, velocity=1.0)
+        self.lorentz_particle(charge=1.0, velocity=2.0)
+
+    def lorentz_particle(self, charge, velocity, B_strength=1.2, angle_degrees=45):
+        # -------- SETUP --------
+        angle = angle_degrees * DEGREES  # Umrechnung in Radianten
+        force = charge * velocity * B_strength # * sin(90)
+        
+        # -------- MAGNETFELD --------
+        B_field = VGroup(*[
+            Text("×", font_size=24)
+            for _ in range(64)
+        ]).arrange_in_grid(8, 8, buff=0.7)
+        B_field.set_color(BLUE)
+        
+        # -------- TEILCHEN --------
+        particle = Dot(color=RED if charge > 0 else BLUE)
+        
+        # -------- BESCHRIFTUNGEN --------
+        B_label = Tex(r"$\vec{B}$").set_color(BLUE).next_to(B_field, UP, buff=0.2)  # B-Vektor über dem Feld
+        q_label = Tex(f"q = {charge} e").set_color(RED if charge > 0 else BLUE)
+        v_label = Tex(r"$v = " + str(velocity) + r"\,\mathrm{\frac{m}{s}}$").set_color(GREEN)
+        
+        # Positionierung der Labels
+        q_label.to_corner(UL)
+        v_label.next_to(q_label, DOWN)
+        
+        # -------- BAHNBERECHNUNG --------
+        radius = abs(velocity * charge / B_strength)
+        center_offset = radius * np.array([-np.sin(angle), np.cos(angle), 0])
+        
+        # Zeit für genau eine Rotation
+        omega = velocity / radius  # Kreisfrequenz
+        t_max = 2 * np.pi / omega  # Zeit für eine volle Rotation
+        
+        # Kreis erstellen und rotieren
+        circle = Circle(radius=radius, color=YELLOW).move_to(center_offset)
+        circle.rotate(-angle, about_point=center_offset)  # Rotation um 90° (oder einen anderen Winkel)
+        circle.set_stroke(opacity=0.3)
+        
+        # -------- KRAFTVEKTOR --------
+        # Skalierungsfaktoren
+        force_scale = 0.5
+        velocity_scale = 0.5
+        
+        # Standardwerte für alle Pfeile
+        arrow_kwargs = {
+            "tip_length": 0.4,  # Same tip size for all arrows
+            "max_tip_length_to_length_ratio": 0.4
+        }
+        
+        force_vector = Arrow(
+            start=ORIGIN, 
+            end=RIGHT, 
+            color=RED,
+            **arrow_kwargs
+        )
+
+        
+        velocity_vector = Arrow(
+            start=ORIGIN,
+            end=RIGHT,
+            color=GREEN,
+            **arrow_kwargs
+        )
+        
+        def update_force_vector(arrow):
+            # Berechne neue Start- und Endpunkte
+            start = particle.get_center()
+            direction = center_offset - start
+            direction = direction / np.linalg.norm(direction) * force * force_scale
+            # Aktualisiere den existierenden Pfeil
+            arrow.put_start_and_end_on(
+                start,
+                start + direction
+            )
+            
+        def update_velocity_vector(arrow):
+            # Berechne neue Start- und Endpunkte
+            start = particle.get_center()
+            # Vektor vom Kreismittelpunkt zum Teilchen
+            radial = start - center_offset
+            # Tangentialvektor (90° gedreht)
+            tangent = np.array([-radial[1], radial[0], 0])  # Rotation um 90°
+            # Normieren und skalieren
+            tangent = tangent / np.linalg.norm(tangent) * velocity * velocity_scale
+            # Aktualisiere den existierenden Pfeil
+            arrow.put_start_and_end_on(
+                start,
+                start + tangent
+            )
+        
+        # Füge den Updater hinzu
+        force_vector.add_updater(update_force_vector)
+        velocity_vector.add_updater(update_velocity_vector)
+        
+        # -------- ANIMATION --------
+        self.play(
+            FadeIn(B_field),
+            Write(B_label),
+            FadeIn(particle),
+            Write(q_label),
+            Write(v_label)
+        )
+        self.wait()
+
+        rate = lambda t: min(max(3*t-1, 0), 1)
+
+        self.play(
+            MoveAlongPath(particle, circle, rate_func=linear),
+            FadeIn(circle, rate_func=rate), 
+            FadeIn(velocity_vector, rate_func=rate), FadeIn(force_vector, rate_func=rate),
+            run_time=t_max
+        )
+        self.wait()
+        
+        # Aufräumen
+        self.play(
+            *[FadeOut(mob) for mob in [B_field, B_label,
+                                     particle, q_label, v_label, circle, 
+                                     force_vector, velocity_vector]]
+        )
