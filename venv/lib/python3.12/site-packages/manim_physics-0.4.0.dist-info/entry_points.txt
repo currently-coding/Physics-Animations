@@ -1,0 +1,3 @@
+[manim.plugins]
+manim_physics=manim_physics
+
