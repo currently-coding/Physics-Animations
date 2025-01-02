@@ -1,4 +1,4 @@
-#!/home/me/Documents/software/Physics-Animations/venv/bin/python
+#!/home/me/Documents/software/Physics-Animations/venv/bin/python3.12
 
 """Play subtitles with correct timing to stdout."""
 
