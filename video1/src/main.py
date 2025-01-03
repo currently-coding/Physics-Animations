@@ -1,6 +1,12 @@
 from dataclasses import field
-from cloup import get_current_context
+from manim_physics import Wire, MagneticField
 from manim import (
+    Rectangle,
+    BLACK,
+    GREEN,
+    RED,
+    BLUE,
+    ImageMobject,
     Line,
     Scene,
     Square,
@@ -47,7 +53,6 @@ import numpy as np
 class LorentzKraftVideo(Scene):
     def construct(self):
         # Titel der Präsentation
-
         title = Text("Die Lorentzkraft", font_size=72)
         subtitle = Text("erklärt am magnetohydrodynamischen Antrieb", font_size=36)
         subtitle.next_to(title, DOWN)
@@ -57,7 +62,6 @@ class LorentzKraftVideo(Scene):
         experiment_note = Text(
             "Von oben gefilmter Versuch mit Pfeilen erklärt", font_size=36
         )
-
         # Definition und Formel
         definition_header = Text("Definition:", font_size=48).to_edge(UP, buff=2)
 
@@ -84,73 +88,30 @@ class LorentzKraftVideo(Scene):
         # Gruppierung
         definition_group = VGroup(definition_header, definition_text, lorentz_eqn)
         definition_group.move_to(ORIGIN)
+        # ---- Aufbau ----
+        #
+        # Hier Magnet einleitung
+        self.bar_magnet_field_lines()
 
-        # Animation Sequenz
-        self.play(Write(title_group))
-        self.wait(2)
-        self.play(FadeOut(title_group))
-
-        self.play(Write(experiment_note))
-        self.wait(2)
-        self.play(FadeOut(experiment_note))
-
+        #
+        # TODO: Hier Probemagnet hinzufuegen und hervorheben
+        #
+        # Hier lorentz_particle_comparison() zeigen und definieren
+        self.lorentz_particle_comparison()
         self.play(Write(definition_group))
-        self.wait(3)
+        self.wait(5)
+        self.play(FadeOut(definition_group))
+        #
+        # TODO: Hier Lorentz zeigen(Bild von ihm)
+        #
+        # Hier Formel zeigen
         self.play(
-            FadeOut(definition_header),
-            FadeOut(definition_text),
             lorentz_eqn.animate.to_edge(UR),
         )
-
-        # Right-hand rule demonstration
-        hand = SVGMobject("svg/right-hand-rule.svg").scale(2)
-        v_vector = Vector(0.5 * RIGHT + 2.5 * UP).set_color(GREEN)
-        v_label = Tex(r"$\vec{v}$").set_color(GREEN).next_to(v_vector, UP)
-
-        B_vector = Vector(3 * LEFT + 0.75 * UP).set_color(BLUE)
-        B_label = (
-            Tex(r"$\vec{B}$")
-            .move_to(B_vector.get_end())
-            .shift(UL * 0.5)
-            .set_color(BLUE)
-        )
-
-        F_vector = Vector(2.5 * LEFT + 1 * DOWN).set_color(RED)
-        F_label = (
-            Tex(r"$\vec{F}_L$")
-            .move_to(F_vector.get_end())
-            .shift(DL * 0.5)
-            .set_color(RED)
-        )
-
-        self.play(Write(hand))
-        self.play(Write(v_vector), Write(B_vector))
-        self.play(FadeIn(v_label, B_label))
-        self.play(Write(F_vector))
-        self.play(FadeIn(F_label))
-        self.wait()
-        self.play(
-            FadeOut(
-                v_label,
-                B_label,
-                F_label,
-                lorentz_eqn,
-                hand,
-                v_vector,
-                B_vector,
-                F_vector,
-            )
-        )
-
-        # Application placeholder
-        application_text = Text("Anwendung auf den Versuch", font_size=36).move_to(
-            ORIGIN
-        )
-
-        self.play(Write(application_text))
-        self.wait(2)
-        self.play(FadeOut(application_text))
-
+        #
+        # Hier Kreuzprodukt aufloesen
+        #
+        # Hier beziehungen zeigen
         # Mathematical derivation
         eqn = (
             MathTex(r"\vec{F}_L", r"=", r"q(", r"\vec{v}", r"\times", r"\vec{B}", r")")
@@ -190,7 +151,7 @@ class LorentzKraftVideo(Scene):
             "• schneller sich die Ladung bewegt (v)",
             "• stärker das Magnetfeld ist (B)",
             "• mehr die Bewegungsrichtung senkrecht",
-            "  zum Magnetfeld steht (sin θ)",
+            "• zum Magnetfeld steht (sin θ)",
         ]
 
         bullet_points = VGroup(
@@ -213,12 +174,116 @@ class LorentzKraftVideo(Scene):
 
         self.play(FadeOut(eqn), FadeOut(text_group))
 
-        self.lorentz_particle(
-            charge=1.0,
-            velocity=1.0,
+        self.lorentz_particle()
+        self.lorentz_particle(B_strength=2)
+        self.lorentz_particle(velocity=1)
+        self.lorentz_particle(charge=1.5)
+        #
+        # Hier 3-Finger Regel zeigen
+        #
+        hand = SVGMobject("svg/right-hand-rule.svg").scale(2)
+        v_vector = Vector(0.5 * RIGHT + 2.5 * UP).set_color(GREEN)
+        v_label = Tex(r"$\vec{v}$").set_color(GREEN).next_to(v_vector, UP)
+
+        B_vector = Vector(3 * LEFT + 0.75 * UP).set_color(BLUE)
+        B_label = (
+            Tex(r"$\vec{B}$")
+            .move_to(B_vector.get_end())
+            .shift(UL * 0.5)
+            .set_color(BLUE)
         )
-        self.lorentz_particle(charge=1.0, velocity=2.0)
-        self.lorentz_particle_no_explanation()
+
+        F_vector = Vector(2.5 * LEFT + 1 * DOWN).set_color(RED)
+        F_label = (
+            Tex(r"$\vec{F}_L$")
+            .move_to(F_vector.get_end())
+            .shift(DL * 0.5)
+            .set_color(RED)
+        )
+
+        self.play(Write(hand))
+        self.play(Write(v_vector), Write(B_vector))
+        self.play(FadeIn(v_label, B_label))
+        self.play(Write(F_vector))
+        self.play(FadeIn(F_label))
+        self.wait()
+        self.play(
+            FadeOut(
+                v_label,
+                B_label,
+                F_label,
+                lorentz_eqn,
+                hand,
+                v_vector,
+                B_vector,
+                F_vector,
+            )
+        )
+        # TODO: Hier Versuch mit Pfeilen zeigen
+        #
+        # Fertig!
+        # (evtl code scroll down zeigen)
+        # ----- Ende -----
+
+        # Animation Sequenz
+        #
+        #
+        # self.play(Write(title_group))
+        # self.wait(2)
+        # self.play(FadeOut(title_group))
+
+        # self.play(Write(experiment_note))
+        # self.wait(2)
+        # self.play(FadeOut(experiment_note))
+
+        self.wait(3)
+
+        # Right-hand rule demonstration
+
+        # Application placeholder
+        application_text = Text("Anwendung auf den Versuch", font_size=36).move_to(
+            ORIGIN
+        )
+
+        self.play(Write(application_text))
+        self.wait(2)
+        self.play(FadeOut(application_text))
+
+    def bar_magnet_field_lines(self):
+        # Load the image (use the image file name or full path)
+        image = ImageMobject(
+            "../bar-magnet-icon-n-pole-and-s-pole-magnets-png-3540789338.png"
+        )
+        image.rotate(-1 * (PI / 4))
+
+        # Resize the image (optional)
+        image.scale(0.4)  # Adjust the scale factor as needed
+
+        # Position the image (optional)
+        image.to_edge(UP)  # Moves the image to the top edge of the screen
+        image.shift(UP * 0.5)
+
+        north = (
+            Rectangle(BLACK, height=0.8, width=1.5)
+            .shift(LEFT * 0.5)
+            .set_fill(GREEN, opacity=100)
+        )
+        south = Rectangle(BLACK, height=0.8, width=1.5).set_fill(RED, opacity=100)
+        south.next_to(north, buff=0)
+
+        # Adding the field lines
+        wire3 = Wire(Circle(1).rotate(PI / 2, UP), current=2)
+        mag_field = MagneticField(
+            wire3,
+            x_range=[-10, 10],
+            y_range=[-10, 10],
+        )
+        self.play(FadeIn(mag_field))
+        # Add the image to the scene
+        self.add(image)
+        # self.add(south, north)
+        self.wait(3)
+        self.play(FadeOut(mag_field, image))
 
     def lorentz_particle(
         self, charge=1.0, velocity=2.0, B_strength=1.2, angle_degrees=45
@@ -236,7 +301,6 @@ class LorentzKraftVideo(Scene):
         B_field.set_color(BLUE)
 
         # -------- PARTICLE --------
-        particle = Dot(color=RED if charge > 0 else BLUE)
 
         # -------- LABELS --------
         B_label = (
@@ -251,17 +315,43 @@ class LorentzKraftVideo(Scene):
         q_label.to_corner(UL)
         v_label.next_to(q_label, DOWN)
 
-        # -------- TRAJECTORY CALCULATION --------
+        def get_B_field_bounds(B_field):
+            """Get the bounds (left, right, top, bottom) of the B_field."""
+            left = B_field.get_left()[0]  # x-coordinate of the leftmost point
+            right = B_field.get_right()[0]  # x-coordinate of the rightmost point
+            top = B_field.get_top()[1]  # y-coordinate of the topmost point
+            bottom = B_field.get_bottom()[1]  # y-coordinate of the bottommost point
+            return left, right, top, bottom
+
+        field_bounds = get_B_field_bounds(B_field)
+        field_center = np.array(
+            [
+                (field_bounds[1] + field_bounds[0]) / 2,
+                (field_bounds[2] + field_bounds[3]) / 2,
+                0,
+            ]
+        )
+        # spawns center of b_field
         radius = abs(velocity * charge / B_strength)
-        center_offset = radius * np.array([-np.sin(angle), np.cos(angle), 0])
+        circle = Circle(radius=radius, color=YELLOW).move_to(field_center)
+        particle = (
+            Dot(color=RED if charge > 0 else BLUE)
+            .move_to(field_center)
+            .shift(RIGHT * radius)
+        )
+        center_offset = radius * np.array(
+            [-np.sin(angle), np.cos(angle), 0]
+        )  # BUG: incorrect calculation leads to errors pointing wrong directions
 
         # Time for exactly one rotation
         omega = velocity / radius  # Angular frequency
         t_max = 2 * np.pi / omega  # Time for one full rotation
 
         # Create and rotate circle
-        circle = Circle(radius=radius, color=YELLOW).move_to(center_offset)
-        circle.rotate(-angle, about_point=center_offset)
+        # circle = Circle(radius=radius, color=YELLOW).move_to(center_offset) circle already at correct position
+        # circle.rotate(
+        # -angle, about_point=center_offset
+        # )  # BUG: no clue why that is here, seems to mess stuff up
         circle.set_stroke(opacity=0.3)
 
         # -------- FORCE VECTOR --------
@@ -371,6 +461,10 @@ class LorentzKraftVideo(Scene):
             GREEN
         )
 
+        # Label positioning
+        q_label.to_corner(UL)
+        v_label.next_to(q_label, DOWN)
+
         def get_B_field_bounds(B_field):
             """Get the bounds (left, right, top, bottom) of the B_field."""
             left = B_field.get_left()[0]  # x-coordinate of the leftmost point
@@ -379,12 +473,6 @@ class LorentzKraftVideo(Scene):
             bottom = B_field.get_bottom()[1]  # y-coordinate of the bottommost point
             return left, right, top, bottom
 
-        # Label positioning
-        q_label.to_corner(UL)
-        v_label.next_to(q_label, DOWN)
-
-        # -------- TRAJECTORY CALCULATION --------
-        # circle center needs to be in field
         field_bounds = get_B_field_bounds(B_field)
         field_center = np.array(
             [
@@ -393,7 +481,14 @@ class LorentzKraftVideo(Scene):
                 0,
             ]
         )
+        # spawns center of b_field
         radius = abs(velocity * charge / B_strength)
+        circle = Circle(radius=radius, color=YELLOW).move_to(field_center)
+        # circle.rotate(-angle, about_point=center_offset)
+        circle.set_stroke(opacity=0.3)
+
+        # -------- TRAJECTORY CALCULATION --------
+        # circle center needs to be in field
         center_offset = field_center + radius * np.array(
             [-np.sin(angle), np.cos(angle), 0]
         )
@@ -403,12 +498,6 @@ class LorentzKraftVideo(Scene):
         # Time for exactly one rotation
         omega = velocity / radius  # Angular frequency
         t_max = 2 * np.pi / omega  # Time for one full rotation
-
-        # Create and rotate circle
-        # spawns center of b_field
-        circle = Circle(radius=radius, color=YELLOW).move_to(field_center)
-        # circle.rotate(-angle, about_point=center_offset)
-        circle.set_stroke(opacity=0.3)
 
         # -------- FORCE VECTOR --------
         # Scaling factors
