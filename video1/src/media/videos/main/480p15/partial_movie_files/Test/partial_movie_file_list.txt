@@ -1,0 +1,10 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2550307886_105375102_223132457.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2732211768_2304249630_1082765809.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2732211768_3853698350_1172427106.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2732211768_3494816192_3120607215.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2732211768_2714423538_2250295622.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2732211768_2304249630_3357460895.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2732211768_2520074362_1127891497.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2732211768_2304249630_665503415.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video1/src/media/videos/main/480p15/partial_movie_files/Test/2732211768_433805_448640998.mp4'
