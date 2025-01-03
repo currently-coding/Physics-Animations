@@ -341,11 +341,6 @@ class LorentzKraftVideo(Scene):
             ]
         )
 
-
-class Test(ThreeDScene):
-    def construct(self):
-        self.lorentz_particle_comparison()
-
     def lorentz_particle_comparison(
         self, charge=1.0, velocity=2.0, B_strength=1.2, angle_degrees=45
     ):
