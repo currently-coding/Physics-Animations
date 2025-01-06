@@ -586,10 +586,9 @@ class LorentzKraftVideo(Scene):
         )
 
 
-class Testing(ThreeDScene):
+class Test(ThreeDScene):
     def construct(self):
-        self.lorentz_particle_comparison(velocity=1.5)
-        # self.testing()
+        self.lorentz_particle_comparison(velocity=1)
 
     def lorentz_particle_comparison(
         self, charge=1.0, velocity=2.0, B_strength=1.2, angle_degrees=45
@@ -602,8 +601,8 @@ class Testing(ThreeDScene):
 
         # -------- MAGNETIC FIELD --------
         B_field = (
-            VGroup(*[Text("×", font_size=24) for _ in range(15)])
-            .arrange_in_grid(3, 5, buff=0.7)
+            VGroup(*[Text("×", font_size=24) for _ in range(12)])
+            .arrange_in_grid(2, 6, buff=0.7)
             .shift(RIGHT * 2)
         )
         B_field.set_color(BLUE)
@@ -613,6 +612,9 @@ class Testing(ThreeDScene):
         particle = Dot(color=RED if charge > 0 else BLUE).center()
 
         # -------- LABELS --------
+        B_label = (
+            Tex(r"$\vec{B}$").set_color(BLUE).next_to(B_field, UP, buff=0.2)
+        )  # B vector above field
         q_label = Tex(f"q = {charge} e").set_color(RED if charge > 0 else BLUE)
         v_label = Tex(r"$v = " + str(velocity) + r"\,\mathrm{\frac{m}{s}}$").set_color(
             GREEN
@@ -732,23 +734,18 @@ class Testing(ThreeDScene):
         self.wait()
 
         self.play(
+            MoveAlongPath(particle, circle, condition=in_field),
             MoveAlongPath(particle2, path2),
             FadeIn(circle, rate_func=rate),
             FadeIn(force_vector, rate_func=rate),
             rate_func=linear,
             run_time=t_max,
         )
-        self.play(
-            MoveAlongPath(particle, circle, condition=in_field),
-            run_time=t_max,
-            rate_func=linear,
-        )
         tangent = calculate_tangent(particle.get_center(), circle.get_center())
         exit_path = Line(
-            start=particle.get_center(),
-            end=particle.get_center() + 2 * PI * radius * tangent,
+            start=particle.get_center(), end=particle.get_center() + radius * tangent
         )
-        self.play(MoveAlongPath(particle, exit_path), rate_func=linear, run_time=t_max)
+        self.play(MoveAlongPath(particle, exit_path))
         self.wait()
 
         # Aufräumen
