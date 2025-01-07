@@ -1,11 +1,16 @@
 from dataclasses import field
 from manim_physics import Wire, MagneticField
 from manim import (
+    TracedPath,
     Rectangle,
     BLACK,
     GREEN,
     RED,
     BLUE,
+    ORANGE,
+    TEAL,
+    PURPLE,
+    MAROON,
     ImageMobject,
     Line,
     Scene,
@@ -48,6 +53,7 @@ from manim import (
     PI,
 )
 import numpy as np
+from pathops import NumberOfPointsError
 
 
 class LorentzKraftVideo(Scene):
@@ -97,7 +103,7 @@ class LorentzKraftVideo(Scene):
         # TODO: Hier Probemagnet hinzufuegen und hervorheben
         #
         # Hier lorentz_particle_comparison() zeigen und definieren
-        self.lorentz_particle_comparison()
+        self.particle_deflection()
         self.play(Write(definition_group))
         self.wait(5)
         self.play(FadeOut(definition_group))
@@ -585,185 +591,104 @@ class LorentzKraftVideo(Scene):
             ]
         )
 
+    def particle_deflection(self, velocity=1, field_strength=0.5, number_of_objects=1):
+        # used for smoother movements
+        oversampling = max(1, int(100 / config.frame_rate))
+        height, width = 3, 3
+        number_of_objects = 5
+        field = Rectangle(height=height, width=width)
+        magnet_field = VGroup(
+            *[Text("×", font_size=24) for _ in range(width * height * 4)]
+        ).arrange_in_grid(height * 2, width * 2, buff=0.35)
+        magnet_field.set_color(BLUE)
+        dots = VGroup()
+        speeds = [0.5 + a / 2 for a in range(number_of_objects)]
+        for idx in range(number_of_objects):
+            dot = Dot(
+                point=[-3, field.get_center()[1] - 1, 0],
+                color=RED,
+            )
+            # dot velocity
+            dot.v = np.array([np.random.uniform(0.5, 2), 0, 0])
+
+            def dotupdater(mobj, dt):
+                if dt > 0:
+                    ddt = dt / oversampling
+                    for _ in range(oversampling):
+                        p = mobj.get_center()
+                        if (field.get_left()[0] < p[0] < field.get_right()[0]) and (
+                            field.get_bottom()[1] < p[1] < field.get_top()[1]
+                        ):
+                            mobj.v += (
+                                field_strength
+                                * ddt
+                                * np.matmul(
+                                    np.array([[0, -1, 0], [1, 0, 0], [0, 0, 0]]), mobj.v
+                                )
+                            )
+                        mobj.shift(ddt * mobj.v)
+
+            dot.add_updater(dotupdater)
+            dots += dot
+        traces = VGroup(
+            *[TracedPath(dot.get_center, stroke_color=dot.get_color()) for dot in dots]
+        )
+        self.add(magnet_field, field)
+        self.wait(3)
+        self.add(dots, traces)
+        self.wait(10)
+
 
 class Testing(ThreeDScene):
     def construct(self):
-        self.lorentz_particle_comparison(velocity=1.5)
-        # self.testing()
+        # self.lorentz_particle_comparison(velocity=1.5)
+        self.particle_deflection()
 
-    def lorentz_particle_comparison(
-        self, charge=1.0, velocity=2.0, B_strength=1.2, angle_degrees=45
-    ):
-        # -------- PARAMETERS (adjust here) --------
+    def particle_deflection(self, velocity=1, field_strength=0.5, number_of_objects=1):
+        # used for smoother movements
+        oversampling = max(1, int(100 / config.frame_rate))
+        height, width = 3, 3
+        number_of_objects = 5
+        field = Rectangle(height=height, width=width)
+        magnet_field = VGroup(
+            *[Text("×", font_size=24) for _ in range(width * height * 4)]
+        ).arrange_in_grid(height * 2, width * 2, buff=0.35)
+        magnet_field.set_color(BLUE)
+        dots = VGroup()
+        speeds = [0.5 + a / 2 for a in range(number_of_objects)]
+        for idx in range(number_of_objects):
+            dot = Dot(
+                point=[-3, field.get_center()[1] - 1, 0],
+                color=RED,
+            )
+            # dot velocity
+            dot.v = np.array([np.random.uniform(0.5, 2), 0, 0])
 
-        # -------- SETUP --------
-        angle = angle_degrees * DEGREES  # Convert to radians
-        force = charge * velocity * B_strength  # * sin(90)
+            def dotupdater(mobj, dt):
+                if dt > 0:
+                    ddt = dt / oversampling
+                    for _ in range(oversampling):
+                        p = mobj.get_center()
+                        if (field.get_left()[0] < p[0] < field.get_right()[0]) and (
+                            field.get_bottom()[1] < p[1] < field.get_top()[1]
+                        ):
+                            mobj.v += (
+                                field_strength
+                                * ddt
+                                * np.matmul(
+                                    np.array([[0, -1, 0], [1, 0, 0], [0, 0, 0]]), mobj.v
+                                )
+                            )
+                        mobj.shift(ddt * mobj.v)
 
-        # -------- MAGNETIC FIELD --------
-        B_field = (
-            VGroup(*[Text("×", font_size=24) for _ in range(15)])
-            .arrange_in_grid(3, 5, buff=0.7)
-            .shift(RIGHT * 2)
+            dot.add_updater(dotupdater)
+            dots += dot
+        traces = VGroup(
+            *[TracedPath(dot.get_center, stroke_color=dot.get_color()) for dot in dots]
         )
-        B_field.set_color(BLUE)
+        self.add(magnet_field, field)
+        self.wait(3)
+        self.add(dots, traces)
 
-        # -------- PARTICLE --------
-        # needs to be right by one radius of circle
-        particle = Dot(color=RED if charge > 0 else BLUE).center()
-
-        # -------- LABELS --------
-        q_label = Tex(f"q = {charge} e").set_color(RED if charge > 0 else BLUE)
-        v_label = Tex(r"$v = " + str(velocity) + r"\,\mathrm{\frac{m}{s}}$").set_color(
-            GREEN
-        )
-
-        # Label positioning
-        q_label.to_corner(UL)
-        v_label.next_to(q_label, DOWN)
-
-        def get_B_field_bounds(B_field):
-            """Get the bounds (left, right, top, bottom) of the B_field."""
-            left = B_field.get_left()[0]  # x-coordinate of the leftmost point
-            right = B_field.get_right()[0]  # x-coordinate of the rightmost point
-            top = B_field.get_top()[1]  # y-coordinate of the topmost point
-            bottom = B_field.get_bottom()[1]  # y-coordinate of the bottommost point
-            return left, right, top, bottom
-
-        field_bounds = get_B_field_bounds(B_field)
-        field_center = np.array(
-            [
-                abs(field_bounds[1] + field_bounds[0]) / 2,
-                abs(field_bounds[2] + field_bounds[3]) / 2,
-                0,
-            ]
-        )
-        # spawns center of b_field
-        radius = abs(velocity * charge / B_strength)
-        circle = Circle(radius=radius, color=YELLOW).move_to(field_center)
-        # circle.rotate(-angle, about_point=center_offset)
-        circle.set_stroke(opacity=0.3)
-
-        # -------- TRAJECTORY CALCULATION --------
-        # circle center needs to be in field
-        center_offset = field_center + radius * np.array(
-            [-np.sin(angle), np.cos(angle), 0]
-        )
-        particle.move_to(field_center).shift(RIGHT * radius)
-        # particle2.move_to(-field_center)
-
-        # Time for exactly one rotation
-        omega = velocity / radius  # Angular frequency
-        t_max = 2 * np.pi / omega  # Time for one full rotation
-
-        # -------- FORCE VECTOR --------
-        # Scaling factors
-        force_scale = 0.5
-        velocity_scale = 0.5
-
-        # Standard values for all arrows
-        arrow_kwargs = {
-            "tip_length": 0.4,  # Same tip size for all arrows
-            "max_tip_length_to_length_ratio": 0.4,
-        }
-
-        force_vector = Arrow(start=ORIGIN, end=RIGHT, color=RED, **arrow_kwargs)
-
-        velocity_vector = Arrow(start=ORIGIN, end=RIGHT, color=GREEN, **arrow_kwargs)
-
-        def update_force_vector(arrow):
-            # Calculate new start and end points
-            start = particle.get_center()
-            direction = center_offset - start
-            direction = direction / np.linalg.norm(direction) * force * force_scale
-            # Update existing arrow
-            arrow.put_start_and_end_on(start, start + direction)
-
-        def update_velocity_vector(arrow):
-            # Calculate new start and end points
-            start = particle.get_center()
-            # Vector from circle center to particle
-            radial = start - center_offset
-            # Tangential vector (90° rotation)
-            tangent = np.array([-radial[1], radial[0], 0])
-            # Normalize and scale
-            tangent = tangent / np.linalg.norm(tangent) * velocity * velocity_scale
-            # Update existing arrow
-            arrow.put_start_and_end_on(start, start + tangent)
-
-        def in_field(point):
-            """Check if the point is within the bounds of B_field."""
-            x, y, _ = point
-            left, right, top, bottom = get_B_field_bounds(B_field)
-            return left <= x <= right and bottom <= y <= top
-
-        def calculate_tangent(point, center):
-            """Calculate the tangent vector at a point on a circle."""
-            # Radial vector
-            radial = point - center
-            # Tangent vector (90-degree rotation in 2D)
-            tangent = np.array([-radial[1], radial[0], 0])
-            # Normalize the tangent vector
-            tangent_unit = tangent / np.linalg.norm(tangent)
-            return tangent_unit
-
-        # Füge den Updater hinzu
-        force_vector.add_updater(update_force_vector)
-        velocity_vector.add_updater(update_velocity_vector)
-        circle_circumference = radius * 2 * PI
-
-        particle2 = (
-            Dot(color=RED if charge > 0 else BLUE)
-            .shift((circle_circumference / 4) * DOWN)
-            .shift(LEFT * 4)
-        )
-        end2 = Dot().shift(circle_circumference / 2 * UP).shift(LEFT * 4)
-        rate = lambda t: min(max(3 * t - 1, 0), 1)
-        path2 = Line(start=particle2.get_center(), end=end2.get_center())
-
-        # -------- ANIMATION --------
-
-        self.play(
-            FadeIn(particle2),
-            FadeIn(B_field),
-            FadeIn(particle),
-            FadeIn(velocity_vector, rate_func=rate),
-        )
-        self.wait()
-
-        self.play(
-            MoveAlongPath(particle2, path2),
-            FadeIn(circle, rate_func=rate),
-            FadeIn(force_vector, rate_func=rate),
-            rate_func=linear,
-            run_time=t_max,
-        )
-        self.play(
-            MoveAlongPath(particle, circle, condition=in_field),
-            run_time=t_max,
-            rate_func=linear,
-        )
-        tangent = calculate_tangent(particle.get_center(), circle.get_center())
-        exit_path = Line(
-            start=particle.get_center(),
-            end=particle.get_center() + 2 * PI * radius * tangent,
-        )
-        self.play(MoveAlongPath(particle, exit_path), rate_func=linear, run_time=t_max)
-        self.wait()
-
-        # Aufräumen
-        self.play(
-            *[
-                FadeOut(mob)
-                for mob in [
-                    B_field,
-                    # B_label,
-                    particle,
-                    # q_label,
-                    # v_label,
-                    circle,
-                    # force_vector,
-                    velocity_vector,
-                ]
-            ]
-        )
+        # self.set_camera_orientation(phi=55 * DEGREES, theta=-45 * DEGREES)
+        self.wait(5)
