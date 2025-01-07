@@ -689,6 +689,5 @@ class Testing(ThreeDScene):
         self.add(magnet_field, field)
         self.wait(3)
         self.add(dots, traces)
-
         # self.set_camera_orientation(phi=55 * DEGREES, theta=-45 * DEGREES)
-        self.wait(5)
+        self.wait(10)
