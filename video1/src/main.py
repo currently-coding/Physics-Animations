@@ -345,9 +345,8 @@ class LorentzKraftVideo(Scene):
             .move_to(field_center)
             .shift(RIGHT * radius)
         )
-        center_offset = radius * np.array(
-            [-np.sin(angle), np.cos(angle), 0]
-        )  # BUG: incorrect calculation leads to errors pointing wrong directions
+        center = particle
+        center_offset = ORIGIN # fixed a so-called bug utilizing advanced linear algebra and vector calculus
 
         # Time for exactly one rotation
         omega = velocity / radius  # Angular frequency
