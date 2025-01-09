@@ -643,25 +643,28 @@ class Testing(ThreeDScene):
         # self.lorentz_particle_comparison(velocity=1.5)
         self.particle_deflection()
 
-    def particle_deflection(self, velocity=1, field_strength=0.5, number_of_objects=1):
+    def particle_deflection(
+        self,
+        velocity: float = 1.0,
+        field_strength: float = 0.4,
+        number_of_objects: int = 1,
+    ):
         # used for smoother movements
         oversampling = max(1, int(100 / config.frame_rate))
         height, width = 3, 3
-        number_of_objects = 5
         field = Rectangle(height=height, width=width)
         magnet_field = VGroup(
             *[Text("×", font_size=24) for _ in range(width * height * 4)]
         ).arrange_in_grid(height * 2, width * 2, buff=0.35)
         magnet_field.set_color(BLUE)
         dots = VGroup()
-        speeds = [0.5 + a / 2 for a in range(number_of_objects)]
         for idx in range(number_of_objects):
             dot = Dot(
                 point=[-3, field.get_center()[1] - 1, 0],
                 color=RED,
             )
             # dot velocity
-            dot.v = np.array([np.random.uniform(0.5, 2), 0, 0])
+            dot.v = np.array([velocity, 0, 0])
 
             def dotupdater(mobj, dt):
                 if dt > 0:
