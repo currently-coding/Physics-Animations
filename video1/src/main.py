@@ -90,16 +90,14 @@ class LorentzKraftVideo(Scene):
         # ---- Aufbau ----
         #
         # INITIAL wait
-        self.wait(36)  # end at 0:36
+        self.wait(40)  # end at 0:40
         # Hier Magnet einleitung
         self.bar_magnet_field_lines()  # end at 1:04
+        self.wait(4)  # til 1:08
 
-        #
-        # TODO: Hier Probemagnet hinzufuegen und hervorheben
-        #
         # Hier lorentz_particle_comparison() zeigen und definieren
         self.particle_deflection(
-            velocity=2, initial_wait=7, animation_time=4
+            velocity=2, initial_wait=1, animation_time=4
         )  # start at 1:11
         self.particle_deflection(initial_wait=2, animation_time=8)
         self.play(Write(definition_group))  # start at 1:26
@@ -124,7 +122,7 @@ class LorentzKraftVideo(Scene):
         #
         # Mathematical derivation
         eqn1 = (
-            MathTex(r"F_L", r"=", r"q", r"v", r"B", r"\sin(\theta)")
+            MathTex(r"F_L", r"=", r"\sin(\alpha)", r"q", r"v", r"B")
             .scale(1.2)
             .to_edge(UP, buff=1)
         )  # Reduced buffer to move everything up
@@ -143,7 +141,7 @@ class LorentzKraftVideo(Scene):
             "• schneller sich die Ladung bewegt (v)",
             "• stärker das Magnetfeld ist (B)",
             "• mehr die Bewegungsrichtung senkrecht",
-            "• zum Magnetfeld steht (sin θ)",
+            "  zum Magnetfeld steht (sin θ)",
         ]
 
         bullet_points = VGroup(
@@ -161,7 +159,7 @@ class LorentzKraftVideo(Scene):
 
         # Animation sequence
         self.play(Transform(eqn, eqn1))  # at 2:01
-        self.wait(6)  # til 2:07
+        self.wait(9)  # til 2:10
         self.play(Write(text_group))  # at 2:08
         self.wait(3)  # til 2:42
         self.play(FadeOut(eqn), FadeOut(text_group))
@@ -197,7 +195,7 @@ class LorentzKraftVideo(Scene):
         self.wait(2)  # til 3:13
         self.play(Write(v_vector), Write(B_vector))
         self.play(FadeIn(v_label, B_label))
-        self.wait()  # til 3:25
+        self.wait(15)  # til 3:28
         self.play(Write(F_vector))
         self.play(FadeIn(F_label))
         self.wait()  # til 3:35
@@ -249,7 +247,7 @@ class LorentzKraftVideo(Scene):
         self.wait(8)  # til 0.45
         # swap image to front and mag field to back
         self.remove(image)
-        self.play(FadeIn(mag_field))
+        self.add(mag_field)
         self.add(image)  # til 1:09
         self.wait(24)
         self.remove(mag_field, image)
@@ -456,7 +454,7 @@ class LorentzKraftVideo(Scene):
         self.wait(animation_time)
         self.remove(magnet_field, dots, traces, field, text)
 
-    def explain_pictur(self):
+    def explain_picture(self):
         # starts at 3:40
         pic1 = "../before_ink.jpg"
         pic2 = "../after_ink.jpg"
@@ -474,12 +472,12 @@ class LorentzKraftVideo(Scene):
         velocity_arrow = Arrow(
             start=magnet_center,
             end=[magnet_center[0] + arrow_length, magnet_center[1], magnet_center[2]],
-            color=BLUE,
+            color=YELLOW,
         )  # Right
         field_arrow = Arrow(
             start=magnet_center,
             end=[magnet_center[0], magnet_center[1] + arrow_length, magnet_center[2]],
-            color=GREEN,
+            color=BLUE,
         )  # Up
         current_arrow = Arrow(
             start=magnet_center,
@@ -488,7 +486,7 @@ class LorentzKraftVideo(Scene):
                 magnet_center[1] + 0.5,
                 magnet_center[2] - arrow_length,
             ],
-            color=RED,
+            color=GREEN,
         )  # Into picture
 
         # Add elements to the scene
@@ -504,4 +502,5 @@ class LorentzKraftVideo(Scene):
 
         self.remove(before_ink)
         self.add(after_ink)  # at 4:32
+        self.wait(3)
         self.remove(after_ink, velocity_arrow, field_arrow, current_arrow)
