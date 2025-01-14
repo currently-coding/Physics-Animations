@@ -198,7 +198,7 @@ class LorentzKraftVideo(Scene):
         self.wait(15)  # til 3:28
         self.play(Write(F_vector))
         self.play(FadeIn(F_label))
-        self.wait()  # til 3:35
+        self.wait(7)  # til 3:35
         self.play(
             FadeOut(
                 v_label,
