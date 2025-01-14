@@ -1,5 +1,10 @@
+from manim_physics import (
+    Wire,
+    MagneticField,
+)
 from manim import (
     TracedPath,
+    GrowArrow,
     Rectangle,
     BLACK,
     GREEN,
@@ -47,12 +52,7 @@ class LorentzKraftVideo(Scene):
         title = Text("Die Lorentzkraft", font_size=72)
         subtitle = Text("erklärt am magnetohydrodynamischen Antrieb", font_size=36)
         subtitle.next_to(title, DOWN)
-        title_group = VGroup(title, subtitle)
 
-        # Versuchsankündigung
-        experiment_note = Text(
-            "Von oben gefilmter Versuch mit Pfeilen erklärt", font_size=36
-        )
         # Definition und Formel
         definition_header = Text("Definition:", font_size=48).to_edge(UP, buff=2)
 
@@ -79,28 +79,32 @@ class LorentzKraftVideo(Scene):
         # Gruppierung
         definition_group = VGroup(definition_header, definition_text, lorentz_eqn)
         definition_group.move_to(ORIGIN)
+
+        #
+        #
+        #
+        #
+        #
+        #
+        #
         # ---- Aufbau ----
         #
+        # INITIAL wait
+        self.wait(36)  # end at 0:36
         # Hier Magnet einleitung
-        self.bar_magnet_field_lines()
+        self.bar_magnet_field_lines()  # end at 1:04
 
         #
         # TODO: Hier Probemagnet hinzufuegen und hervorheben
         #
         # Hier lorentz_particle_comparison() zeigen und definieren
-        self.particle_deflection(velocity=2)
-        self.wait(0.5)
-        self.particle_deflection()
-        self.play(Write(definition_group))
-        self.wait(5)
-        self.play(FadeOut(definition_group))
-        #
-        # TODO: Hier Lorentz zeigen(Bild von ihm)
-        #
-        # Hier Formel zeigen
-        # Hier Kreuzprodukt aufloesen
-        #
-        # Hier beziehungen zeigen
+        self.particle_deflection(
+            velocity=2, initial_wait=7, animation_time=4
+        )  # start at 1:11
+        self.particle_deflection(initial_wait=2, animation_time=8)
+        self.play(Write(definition_group))  # start at 1:26
+        self.wait(34)
+        self.play(FadeOut(definition_group))  # end at 2:00
         # Mathematical derivation
         eqn = (
             MathTex(r"\vec{F}_L", r"=", r"q(", r"\vec{v}", r"\times", r"\vec{B}", r")")
@@ -116,9 +120,8 @@ class LorentzKraftVideo(Scene):
         ]:
             eqn.set_color_by_tex(tex, color)
 
-        self.play(Write(eqn))
-        self.wait()
-
+        # self.play(Write(eqn)) # i think this is the orphan formula
+        #
         # Mathematical derivation
         eqn1 = (
             MathTex(r"F_L", r"=", r"q", r"v", r"B", r"\sin(\theta)")
@@ -150,26 +153,26 @@ class LorentzKraftVideo(Scene):
         # Position bullet points relative to header
         bullet_points.next_to(header, DOWN, buff=0.5)
 
-        # Align last line with bullet points
+        # Aliwgn last line with bullet points
         bullet_points[-1].align_to(bullet_points[-2], LEFT)
 
         # Group all text elements
         text_group = VGroup(header, bullet_points)
 
         # Animation sequence
-        self.play(Transform(eqn, eqn1))
-        self.play(Write(text_group))
-        self.wait(3)
-
+        self.play(Transform(eqn, eqn1))  # at 2:01
+        self.wait(6)  # til 2:07
+        self.play(Write(text_group))  # at 2:08
+        self.wait(3)  # til 2:42
         self.play(FadeOut(eqn), FadeOut(text_group))
-
+        self.wait(2)  # wait before animation
+        #
         self.lorentz_particle(velocity=1)
         self.lorentz_particle(velocity=2)
-        self.lorentz_particle(charge=1)
-        self.lorentz_particle(charge=2)
-        #
-        # Hier 3-Finger Regel zeigen
-        #
+        self.wait()  # til 3:10
+        # #
+        # # Hier 3-Finger Regel zeigen
+        # #
         hand = SVGMobject("svg/right-hand-rule.svg").scale(2)
         v_vector = Vector(0.5 * RIGHT + 2.5 * UP).set_color(GREEN)
         v_label = Tex(r"$\vec{v}$").set_color(GREEN).next_to(v_vector, UP)
@@ -191,11 +194,13 @@ class LorentzKraftVideo(Scene):
         )
 
         self.play(Write(hand))
+        self.wait(2)  # til 3:13
         self.play(Write(v_vector), Write(B_vector))
         self.play(FadeIn(v_label, B_label))
+        self.wait()  # til 3:25
         self.play(Write(F_vector))
         self.play(FadeIn(F_label))
-        self.wait()
+        self.wait()  # til 3:35
         self.play(
             FadeOut(
                 v_label,
@@ -208,7 +213,7 @@ class LorentzKraftVideo(Scene):
                 F_vector,
             )
         )
-        self.wait(3)
+        self.wait(3)  # til 3:40
         self.explain_picture()
         self.wait(5)
 
@@ -240,11 +245,13 @@ class LorentzKraftVideo(Scene):
             x_range=[-10, 10],
             y_range=[-10, 10],
         )
-        self.add(mag_field)
-        self.add(image)
-        # Add the image to the scene
-        # self.add(south, north)
-        self.wait(3)
+        self.add(image)  # 0:37
+        self.wait(8)  # til 0.45
+        # swap image to front and mag field to back
+        self.remove(image)
+        self.play(FadeIn(mag_field))
+        self.add(image)  # til 1:09
+        self.wait(24)
         self.remove(mag_field, image)
 
     def lorentz_particle(
@@ -392,20 +399,14 @@ class LorentzKraftVideo(Scene):
             ]
         )
 
-    def explain_picture(self, waiting: list[int]):
-        pic1 = "../before_ink.jpg"
-        pic11 = "../before_ink_bright.jpg"
-        pic2 = "../after_ink.jpg"
-        before_ink = ImageMobject(pic1)
-        after_ink = ImageMobject(pic2)
-        scale_factor = 0.5
-        before_ink.scale(scale_factor)
-        after_ink.scale(scale_factor)
-        self.add(before_ink)
-        self.wait()
-        self.add(after_ink)
-
-    def particle_deflection(self, velocity=1, field_strength=0.5, number_of_objects=1):
+    def particle_deflection(
+        self,
+        velocity=1,
+        field_strength=0.5,
+        number_of_objects=1,
+        initial_wait=0,
+        animation_time=10,
+    ):
         # used for smoother movements
         oversampling = max(1, int(100 / config.frame_rate))
         text = MathTex("v = ", velocity, r"\frac{m}{s}").to_edge(UP).shift(DOWN * 0.5)
@@ -448,13 +449,15 @@ class LorentzKraftVideo(Scene):
             *[TracedPath(dot.get_center, stroke_color=dot.get_color()) for dot in dots]
         )
         self.add(magnet_field, field)
+        self.wait(initial_wait)
         self.add(text)
-        self.wait(3)
+        self.wait(0.5)
         self.add(dots, traces)
-        self.wait(10)
+        self.wait(animation_time)
         self.remove(magnet_field, dots, traces, field, text)
 
-    def explain_picture(self, waiting: list[int] = [3, 3, 3]):
+    def explain_pictur(self):
+        # starts at 3:40
         pic1 = "../before_ink.jpg"
         pic2 = "../after_ink.jpg"
         before_ink = ImageMobject(pic1)
@@ -468,17 +471,17 @@ class LorentzKraftVideo(Scene):
 
         arrow_length = 2
         # Create arrows originating from magnet_center
-        b_arrow = Arrow(
+        velocity_arrow = Arrow(
             start=magnet_center,
             end=[magnet_center[0] + arrow_length, magnet_center[1], magnet_center[2]],
             color=BLUE,
         )  # Right
-        v_arrow = Arrow(
+        field_arrow = Arrow(
             start=magnet_center,
             end=[magnet_center[0], magnet_center[1] + arrow_length, magnet_center[2]],
             color=GREEN,
         )  # Up
-        into_arrow = Arrow(
+        current_arrow = Arrow(
             start=magnet_center,
             end=[
                 magnet_center[0] + 0.5,
@@ -489,13 +492,16 @@ class LorentzKraftVideo(Scene):
         )  # Into picture
 
         # Add elements to the scene
+        # starts at 3:40
         self.add(before_ink)
-        self.add(b_arrow)  # Add arrow pointing to the right
-        self.add(v_arrow)  # Add arrow pointing upward
-        self.add(into_arrow)  # Add arrow pointing into the picture
+        self.wait()  # til 3:52
+        self.play(GrowArrow(field_arrow))
+        # self.wait()  # til 3:53
+        self.play(GrowArrow(current_arrow))
+        self.wait(17)  # til 4:10
+        self.add(velocity_arrow)
+        self.wait(21)  # til 4:31
 
-        self.wait(waiting[-2])
         self.remove(before_ink)
-        self.add(after_ink)
-        self.wait(waiting[-1])
-        self.remove(after_ink, b_arrow, v_arrow, into_arrow)
+        self.add(after_ink)  # at 4:32
+        self.remove(after_ink, velocity_arrow, field_arrow, current_arrow)
