@@ -1,7 +1,3 @@
-from dataclasses import field
-from os import wait
-from manim.typing import Image
-from manim_physics import ImageMobjectFromCamera, Wire, MagneticField
 from manim import (
     TracedPath,
     Rectangle,
@@ -43,7 +39,6 @@ from manim import (
     PI,
 )
 import numpy as np
-from pathops import NumberOfPointsError
 
 
 class LorentzKraftVideo(Scene):
