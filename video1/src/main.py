@@ -122,7 +122,7 @@ class LorentzKraftVideo(Scene):
         #
         # Mathematical derivation
         eqn1 = (
-            MathTex(r"F_L", r"=", r"\sin(\alpha)", r"q", r"v", r"B")
+            MathTex(r"F_L", r"=", r"q", r"v", r"B", r"\sin(\alpha)")
             .scale(1.2)
             .to_edge(UP, buff=1)
         )  # Reduced buffer to move everything up
@@ -141,7 +141,7 @@ class LorentzKraftVideo(Scene):
             "• schneller sich die Ladung bewegt (v)",
             "• stärker das Magnetfeld ist (B)",
             "• mehr die Bewegungsrichtung senkrecht",
-            "  zum Magnetfeld steht (sin θ)",
+            "  zum Magnetfeld steht (sin α)",
         ]
 
         bullet_points = VGroup(
