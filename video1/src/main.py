@@ -103,66 +103,8 @@ class LorentzKraftVideo(Scene):
         self.play(Write(definition_group))  # start at 1:26
         self.wait(34)
         self.play(FadeOut(definition_group))  # end at 2:00
-        # Mathematical derivation
-        eqn = (
-            MathTex(r"\vec{F}_L", r"=", r"q(", r"\vec{v}", r"\times", r"\vec{B}", r")")
-            .scale(1.2)
-            .move_to(ORIGIN)
-        )
-
-        # Color coding
-        for tex, color in [
-            (r"\vec{v}", GREEN),
-            (r"\vec{B}", BLUE),
-            (r"\vec{F}_L", YELLOW),
-        ]:
-            eqn.set_color_by_tex(tex, color)
-
-        # self.play(Write(eqn)) # i think this is the orphan formula
-        #
-        # Mathematical derivation
-        eqn1 = (
-            MathTex(r"F_L", r"=", r"q", r"v", r"B", r"\sin(\alpha)")
-            .scale(1.2)
-            .to_edge(UP, buff=1)
-        )  # Reduced buffer to move everything up
-
-        # Color coding for equation
-        for tex, color in [(r"v", GREEN), (r"B", BLUE), (r"F_L", YELLOW)]:
-            eqn1.set_color_by_tex(tex, color)
-
-        # Create and position text elements relative to equation
-        header = Text("Die Lorentzkraft ist umso größer, je...", font_size=36).next_to(
-            eqn1, DOWN, buff=0.8
-        )  # Slightly reduced buffer
-
-        points = [
-            "• größer die Ladung q ist",
-            "• schneller sich die Ladung bewegt (v)",
-            "• stärker das Magnetfeld ist (B)",
-            "• mehr die Bewegungsrichtung senkrecht",
-            "  zum Magnetfeld steht (sin α)",
-        ]
-
-        bullet_points = VGroup(
-            *[Text(point, font_size=32) for point in points]
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
-
-        # Position bullet points relative to header
-        bullet_points.next_to(header, DOWN, buff=0.5)
-
-        # Aliwgn last line with bullet points
-        bullet_points[-1].align_to(bullet_points[-2], LEFT)
-
-        # Group all text elements
-        text_group = VGroup(header, bullet_points)
-
-        # Animation sequence
-        self.play(Transform(eqn, eqn1))  # at 2:01
-        self.wait(9)  # til 2:10
-        self.play(Write(text_group))  # at 2:08
-        self.wait(3)  # til 2:42
-        self.play(FadeOut(eqn), FadeOut(text_group))
+        
+        self.properties()  # start at 2:00
         self.wait(2)  # wait before animation
         #
         self.lorentz_particle(velocity=1)
@@ -454,6 +396,68 @@ class LorentzKraftVideo(Scene):
         self.wait(animation_time)
         self.remove(magnet_field, dots, traces, field, text)
 
+    def properties(self):
+        # Mathematical derivation
+        eqn = (
+            MathTex(r"\vec{F}_L", r"=", r"q(", r"\vec{v}", r"\times", r"\vec{B}", r")")
+            .scale(1.2)
+            .move_to(ORIGIN)
+        )
+
+        # Color coding
+        for tex, color in [
+            (r"\vec{v}", GREEN),
+            (r"\vec{B}", BLUE),
+            (r"\vec{F}_L", YELLOW),
+        ]:
+            eqn.set_color_by_tex(tex, color)
+
+        # self.play(Write(eqn)) # i think this is the orphan formula
+
+        # Mathematical derivation
+        eqn1 = (
+            MathTex(r"F_L", r"=", r"q", r"v", r"B", r"\sin(\alpha)")
+            .scale(1.2)
+            .to_edge(UP, buff=1)
+        )  # Reduced buffer to move everything up
+
+        # Color coding for equation
+        for tex, color in [(r"v", GREEN), (r"B", BLUE), (r"F_L", YELLOW)]:
+            eqn1.set_color_by_tex(tex, color)
+
+        # Create and position text elements relative to equation
+        header = Text("Die Lorentzkraft ist umso größer, je...", font_size=36).next_to(
+            eqn1, DOWN, buff=0.8
+        )  # Slightly reduced buffer
+
+        points = [
+            "• größer die Ladung q ist",
+            "• schneller sich die Ladung bewegt (v)",
+            "• stärker das Magnetfeld ist (B)",
+            "• mehr die Bewegungsrichtung senkrecht",
+            "  zum Magnetfeld steht (sin α)",
+        ]
+
+        bullet_points = VGroup(
+            *[Text(point, font_size=32) for point in points]
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
+
+        # Position bullet points relative to header
+        bullet_points.next_to(header, DOWN, buff=0.5)
+
+        # Aliwgn last line with bullet points
+        bullet_points[-1].align_to(bullet_points[-2], LEFT)
+
+        # Group all text elements
+        text_group = VGroup(header, bullet_points)
+
+        # Animation sequence
+        self.play(Transform(eqn, eqn1))  # at 2:01
+        self.wait(9)  # til 2:10
+        self.play(Write(text_group))  # at 2:08
+        self.wait(3)  # til 2:42
+        self.play(FadeOut(eqn), FadeOut(text_group))
+
     def explain_picture(self):
         # starts at 3:40
         pic1 = "../before_ink.jpg"
@@ -467,25 +471,21 @@ class LorentzKraftVideo(Scene):
         # Define magnet center
         magnet_center = [0, -2.5, 0]
 
-        arrow_length = 2
+        arrow_length = 1.7
         # Create arrows originating from magnet_center
         velocity_arrow = Arrow(
             start=magnet_center,
-            end=[magnet_center[0] + arrow_length, magnet_center[1], magnet_center[2]],
+            end=magnet_center + np.array([arrow_length, 0, 0]),
             color=YELLOW,
         )  # Right
         field_arrow = Arrow(
             start=magnet_center,
-            end=[magnet_center[0], magnet_center[1] + arrow_length, magnet_center[2]],
+            end=magnet_center + np.array([0, -arrow_length, 0]),
             color=BLUE,
         )  # Up
         current_arrow = Arrow(
             start=magnet_center,
-            end=[
-                magnet_center[0] + 0.5,
-                magnet_center[1] + 0.5,
-                magnet_center[2] - arrow_length,
-            ],
+            end=magnet_center + np.array([-0.5, -0.7, arrow_length]),
             color=GREEN,
         )  # Into picture
 
@@ -497,10 +497,10 @@ class LorentzKraftVideo(Scene):
         # self.wait()  # til 3:53
         self.play(GrowArrow(current_arrow))
         self.wait(17)  # til 4:10
-        self.add(velocity_arrow)
+        self.play(GrowArrow(velocity_arrow))
         self.wait(21)  # til 4:31
 
         self.remove(before_ink)
+        self.remove(after_ink, velocity_arrow, field_arrow, current_arrow)
         self.add(after_ink)  # at 4:32
         self.wait(3)
-        self.remove(after_ink, velocity_arrow, field_arrow, current_arrow)
