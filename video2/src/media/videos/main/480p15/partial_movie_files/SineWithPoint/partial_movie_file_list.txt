@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/main/480p15/partial_movie_files/SineWithPoint/1185818338_2884302172_223132457.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/main/480p15/partial_movie_files/SineWithPoint/624642324_3742261559_1764474457.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/main/480p15/partial_movie_files/SineWithPoint/624642324_1141282389_2523727990.mp4'
