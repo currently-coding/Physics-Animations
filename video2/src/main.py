@@ -1,5 +1,7 @@
+from math import degrees
 from manim import (
     GREY,
+    ORIGIN,
     GREY_B,
     Rectangle,
     ApplyMethod,
@@ -11,6 +13,7 @@ from manim import (
     GREY_A,
     GRAY_B,
     GRAY_C,
+    Camera,
     DEGREES,
     LEFT,
     RIGHT,
@@ -35,17 +38,20 @@ import numpy as np
 
 class Video(ThreeDScene):
     def construct(self):
-        self.set_camera_orientation(-100 * DEGREES, 0 * DEGREES)
-        data = self.doppelspalt_aufbau_2(num_slits=2)
+        data = self.doppelspalt_aufbau(num_slits=2)
         for elem in data:
             if len(elem) == 0:
                 self.add(elem)
             else:
                 for e in elem:
                     self.add(e)
-        pass
+        self.wait()
+        self.move_camera(
+            theta=25 * DEGREES, phi=-90 * DEGREES, frame_center=data[1][0]
+        )  # unten
+        self.wait()
 
-    def doppelspalt_aufbau_2(self, num_slits=2):
+    def doppelspalt_aufbau(self, num_slits=2):
         # BUG: only works good for even numbers
         # odd numbers will shift everything to one side
         # vars
@@ -75,10 +81,10 @@ class Video(ThreeDScene):
     def get_wall_with_slits(
         self,
         num_slits=2,
-        slit_width=0.25,
+        slit_width=0.2,
         slit_distance=1.2,
         total_distance=40,
-        height=1.5,
+        height=2,
     ):
         parts = []
         distance = 0
@@ -87,7 +93,6 @@ class Video(ThreeDScene):
             cube = (
                 Cube().scale(np.array([height, slit_distance, 0.05])).set_color(GREY_B)
             ).rotate(PI / 2, UP)
-            print(distance, slit)
             if slit % 2:
                 cube.shift((distance) * UP)
             else:
