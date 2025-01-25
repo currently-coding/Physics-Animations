@@ -83,9 +83,10 @@ class Video(ThreeDScene):
         num_slits=2,
         slit_width=0.2,
         slit_distance=1.2,
-        total_distance=40,
+        total_distance=35,
         height=2,
     ):
+        # TODO: extend to cover the total_distance, not just the bare minimum
         parts = []
         distance = 0
         distance_prev = 0
