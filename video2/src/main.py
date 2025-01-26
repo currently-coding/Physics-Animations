@@ -1,6 +1,10 @@
-from math import degrees
 from manim import (
     GREY,
+    linear,
+    WHITE,
+    Arc,
+    ValueTracker,
+    VGroup,
     ORIGIN,
     GREY_B,
     Rectangle,
@@ -32,13 +36,17 @@ from manim import (
     FadeIn,
     Line,
     PI,
+    ParametricFunction,
 )
 import numpy as np
 
 
 class Video(ThreeDScene):
     def construct(self):
-        data = self.doppelspalt_aufbau(num_slits=2)
+        data = self.double_slit_structure(num_slits=2, slit_width=0.6)
+        self.move_camera(
+            theta=90 * DEGREES, phi=-90 * DEGREES, frame_center=data[1][0]
+        )  # unten
         for elem in data:
             if len(elem) == 0:
                 self.add(elem)
@@ -46,12 +54,19 @@ class Video(ThreeDScene):
                 for e in elem:
                     self.add(e)
         self.wait()
-        self.move_camera(
-            theta=25 * DEGREES, phi=-90 * DEGREES, frame_center=data[1][0]
-        )  # unten
-        self.wait()
+        self.sine_from_light(
+            start=np.array([0, 0, 0]), end=data[2].get_center(), freq=PI, amplitude=1
+        )
+        self.wait(2)
 
-    def doppelspalt_aufbau(self, num_slits=2):
+    def double_slit_structure(
+        self,
+        num_slits=2,
+        slit_width=0.2,
+        slit_distance=1.2,
+        total_distance=35,
+        height=2,
+    ):
         # BUG: only works good for even numbers
         # odd numbers will shift everything to one side
         # vars
@@ -64,7 +79,13 @@ class Video(ThreeDScene):
             .shift(LEFT * 3)
             .set_color(YELLOW)
         )
-        slits = self.get_wall_with_slits(num_slits=num_slits)
+        slits = self.get_wall_with_n_slits(
+            num_slits=num_slits,
+            slit_width=slit_width,
+            slit_distance=slit_distance,
+            total_distance=total_distance,
+            height=height,
+        )
         wall = (
             Cube()
             .scale(np.array([3, 0.1, 7]))
@@ -78,7 +99,7 @@ class Video(ThreeDScene):
 
         return (light, slits, wall)
 
-    def get_wall_with_slits(
+    def get_wall_with_n_slits(
         self,
         num_slits=2,
         slit_width=0.2,
@@ -103,3 +124,27 @@ class Video(ThreeDScene):
                 distance_prev = distance
             parts.append(cube)
         return parts
+
+    def sine_from_light(self, start, end, freq=PI, amplitude=1, rotation_angle=10):
+        # TODO: https://www.youtube.com/watch?v=EmKQsSDlaa4&t=863s
+        #
+        # BUG: this code is not sufficient
+        #
+        amplitude /= 3
+        freq *= 2
+
+        # Generate the sine curve between the points
+        sine_curve = ParametricFunction(
+            lambda t: np.array(
+                [t, amplitude * np.sin(t * freq), 0]
+            ),  # Parametric sine curve
+            t_range=[0, 2 * PI],  # Range of t
+            color=BLUE,
+        ).rotate(90 * DEGREES, LEFT)
+
+        # Add the sine curve to the scene
+        self.add(sine_curve)
+
+    def waves(self, start):
+        # TODO: https://www.youtube.com/watch?v=EmKQsSDlaa4&t=814s
+        pass
