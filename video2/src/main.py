@@ -61,16 +61,21 @@ class Video(ThreeDScene):
 
         middle_slits = []
         assert len(data[1]) >= 2
+        print("Elements")
+        for elem in data[1]:
+            print(elem.get_center())
         for idx in range(len(data[1][:-1])):  # loop through slit walls
             center_current = data[1][idx].get_center()
             center_next = data[1][idx + 1].get_center()
-            print(center_current, center_next)
             middle = (center_current[1] + center_next[1]) / 2
             middle_slits.append(
                 np.array(
                     [data[1][idx].get_center()[0], middle, data[1][idx].get_center()[2]]
                 )
             )
+        print("Calculations")
+        for elem in middle_slits:
+            print(elem)
 
         self.explain_formula(screen=data[-1], middle_slits=middle_slits)
 
@@ -103,6 +108,9 @@ class Video(ThreeDScene):
             total_distance=total_distance,
             height=height,
         )
+        print("Slit: ", slits[0].get_center())
+        print("Slit: ", slits[1].get_center())
+        print("Slit: ", slits[2].get_center())
         wall = (
             Cube()
             .scale(np.array([3, 0.1, 7]))
@@ -140,6 +148,7 @@ class Video(ThreeDScene):
                 cube.shift((distance) * DOWN)
                 distance_prev = distance
             parts.append(cube)
+        parts.sort(key=lambda x: x.get_center()[1])
         return parts
 
     def sine_from_light(self, start, end, freq=PI, amplitude=1, rotation_angle=10):
