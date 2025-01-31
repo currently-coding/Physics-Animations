@@ -59,6 +59,23 @@ class Video(ThreeDScene):
         )
         self.wait(2)
 
+        middle_slits = []
+        assert len(data[1]) >= 2
+        for idx in range(len(data[1][:-1])):  # loop through slit walls
+            center_current = data[1][idx].get_center()
+            center_next = data[1][idx + 1].get_center()
+            print(center_current, center_next)
+            middle = (center_current[1] + center_next[1]) / 2
+            middle_slits.append(
+                np.array(
+                    [data[1][idx].get_center()[0], middle, data[1][idx].get_center()[2]]
+                )
+            )
+
+        self.explain_formula(screen=data[-1], middle_slits=middle_slits)
+
+    # ----- ENDE ------
+
     def double_slit_structure(
         self,
         num_slits=2,
@@ -148,3 +165,27 @@ class Video(ThreeDScene):
     def waves(self, start):
         # TODO: https://www.youtube.com/watch?v=EmKQsSDlaa4&t=814s
         pass
+
+    def explain_formula(self, middle_slits, screen):
+        result = self.get_parts_for_explanation(middle_slits, screen)
+        for elem in result:
+            self.add(elem)
+
+        self.move_camera(
+            theta=-90 * DEGREES, phi=1 * DEGREES, frame_center=screen
+        )  # unten
+        print("did it")
+        self.wait(2)
+
+    def get_parts_for_explanation(self, middle_slits, screen):
+        # draw lines from each slit to center of screen
+        lines = []
+        for middle in middle_slits:
+            lines.append(Line(start=middle, end=screen.get_center()))
+        # one line straight, one angled: |\
+        #                                | \
+        #                                x  x
+        # rotate angled line around end
+        # show right triangle
+        # done!
+        return lines
