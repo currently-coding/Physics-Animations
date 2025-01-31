@@ -1,5 +1,6 @@
 from manim import (
     GREY,
+    MovingCameraScene,
     linear,
     WHITE,
     Arc,
@@ -37,16 +38,17 @@ from manim import (
     Line,
     PI,
     ParametricFunction,
+    camera,
 )
 import numpy as np
 
 
-class Video(ThreeDScene):
+class Video(MovingCameraScene):
     def construct(self):
         data = self.double_slit_structure(num_slits=2, slit_width=0.6)
-        self.move_camera(
-            theta=90 * DEGREES, phi=-90 * DEGREES, frame_center=data[1][0]
-        )  # unten
+        # self.move_camera(
+        #     theta=90 * DEGREES, phi=-90 * DEGREES, frame_center=data[1][0]
+        # )  # unten
         for elem in data:
             if len(elem) == 0:
                 self.add(elem)
@@ -176,14 +178,19 @@ class Video(ThreeDScene):
         pass
 
     def explain_formula(self, middle_slits, screen):
+        self.camera.frame.save_state()  # save state to later zoom out to this again
         result = self.get_parts_for_explanation(middle_slits, screen)
+        # center_dot = Dot(np.array([0, 0, 0])) # was used for centering the cam
+        # TODO: zoom in on start of lines
+        obj1 = result[0].get_start()
+        self.camera.frame.animate.set(width=2).move_to(obj1)
+        # TODO: show rotation of angled line overlaps with 2nd line
+        # -> line 1 = line2(angled) + difference
+        # show right triangle
+        # = formula
+
         for elem in result:
             self.add(elem)
-
-        self.move_camera(
-            theta=-90 * DEGREES, phi=1 * DEGREES, frame_center=screen
-        )  # unten
-        print("did it")
         self.wait(2)
 
     def get_parts_for_explanation(self, middle_slits, screen):
