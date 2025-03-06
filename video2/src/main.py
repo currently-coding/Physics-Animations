@@ -5,6 +5,7 @@ from manim import (
     IN,
     OUT,
     MovingCameraScene,
+    ZoomedScene,
     linear,
     WHITE,
     Arc,
@@ -49,7 +50,7 @@ from manim.utils.color.X11 import MAGENTA
 import numpy as np
 
 
-class Video(ThreeDScene):
+class ExperimentSetup(ThreeDScene):
     def construct(self):
         self.set_camera_orientation(
             phi=0 * DEGREES, theta=-90 * DEGREES, gamma=0 * DEGREES
@@ -194,8 +195,7 @@ class Video(ThreeDScene):
             start=screen.get_center() + np.array([0, 3.8, 0]),
             end=screen.get_center() + np.array([0, -3.8, 0]),
         )
-        print(len(lines))
-
+        self.play(self.camera.frame.animate.scale(0.5))  # Zoom in (reduce the scale)
         # center_dot = Dot(np.array([0, 0, 0])) # was used for centering the cam
         # TODO: zoom in on start of lines
         # TODO: show rotation of angled line overlaps with 2nd line
