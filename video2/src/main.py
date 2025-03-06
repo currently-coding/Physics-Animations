@@ -1,5 +1,9 @@
+from PIL.Image import new
 from manim import (
     GREY,
+    UL,
+    IN,
+    OUT,
     MovingCameraScene,
     linear,
     WHITE,
@@ -15,6 +19,7 @@ from manim import (
     GREY_D,
     Sphere,
     BLACK,
+    MAROON,
     GREY_A,
     GRAY_B,
     GRAY_C,
@@ -40,15 +45,17 @@ from manim import (
     ParametricFunction,
     camera,
 )
+from manim.utils.color.X11 import MAGENTA
 import numpy as np
 
 
-class Video(MovingCameraScene):
+class Video(ThreeDScene):
     def construct(self):
+        self.set_camera_orientation(
+            phi=0 * DEGREES, theta=-90 * DEGREES, gamma=0 * DEGREES
+        )
+        # self.play(self.camera.frame.animate.rotate(PI / 4))
         data = self.double_slit_structure(num_slits=2, slit_width=0.6)
-        # self.move_camera(
-        #     theta=90 * DEGREES, phi=-90 * DEGREES, frame_center=data[1][0]
-        # )  # unten
         for elem in data:
             if len(elem) == 0:
                 self.add(elem)
@@ -79,7 +86,10 @@ class Video(MovingCameraScene):
         for elem in middle_slits:
             print(elem)
 
-        self.explain_formula(screen=data[-1], middle_slits=middle_slits)
+        self.explain_formula(
+            middle_slits=middle_slits,
+            screen=data[-1],
+        )
 
     # ----- ENDE ------
 
@@ -171,37 +181,56 @@ class Video(MovingCameraScene):
         ).rotate(90 * DEGREES, LEFT)
 
         # Add the sine curve to the scene
-        self.add(sine_curve)
+        # self.add(sine_curve)
 
     def waves(self, start):
         # TODO: https://www.youtube.com/watch?v=EmKQsSDlaa4&t=814s
         pass
 
+    def updaters(self, segment: int):
+        """returns all necesarry updaters for specific segments of the animation"""
+
+        def lines_slit_to_screen():
+            pass
+
+        pass
+
     def explain_formula(self, middle_slits, screen):
-        self.camera.frame.save_state()  # save state to later zoom out to this again
-        result = self.get_parts_for_explanation(middle_slits, screen)
+        # self.camera.frame.save_state()  # save state to later zoom out to this again
+        (lines, animations) = self.get_parts_for_explanation(
+            middle_slits,
+            start=screen.get_center() + np.array([0, 3.8, 0]),
+            end=screen.get_center() + np.array([0, -3.8, 0]),
+        )
+        print(len(lines))
+
         # center_dot = Dot(np.array([0, 0, 0])) # was used for centering the cam
         # TODO: zoom in on start of lines
-        obj1 = result[0].get_start()
-        self.camera.frame.animate.set(width=2).move_to(obj1)
         # TODO: show rotation of angled line overlaps with 2nd line
-        # -> line 1 = line2(angled) + difference
-        # show right triangle
-        # = formula
 
-        for elem in result:
-            self.add(elem)
+        self.add(*lines)
+        end = lines[0].get_end() + np.array([0, 1, 0])
+
+        self.play(*animations, run_time=2)
         self.wait(2)
 
-    def get_parts_for_explanation(self, middle_slits, screen):
+    def get_parts_for_explanation(self, middle_slits, start, end):
         # draw lines from each slit to center of screen
-        lines = []
-        for middle in middle_slits:
-            lines.append(Line(start=middle, end=screen.get_center()))
+        lines = [Line(start=middle, end=start) for middle in middle_slits]
+        # correctly draws lines from middle of each slit to a custom point
+        # ----
+        # Animation
+        animations = [
+            line.animate.put_start_and_end_on(line.get_start(), end) for line in lines
+        ]
+        #
+        # swipes lines from slit to screen across entire screen
+        # to show that the following is true for all segmants of the wave
+        # ----
         # one line straight, one angled: |\
         #                                | \
         #                                x  x
         # rotate angled line around end
         # show right triangle
         # done!
-        return lines
+        return (lines, animations)
