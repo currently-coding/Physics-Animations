@@ -187,14 +187,6 @@ class Video(ThreeDScene):
         # TODO: https://www.youtube.com/watch?v=EmKQsSDlaa4&t=814s
         pass
 
-    def updaters(self, segment: int):
-        """returns all necesarry updaters for specific segments of the animation"""
-
-        def lines_slit_to_screen():
-            pass
-
-        pass
-
     def explain_formula(self, middle_slits, screen):
         # self.camera.frame.save_state()  # save state to later zoom out to this again
         (lines, animations) = self.get_parts_for_explanation(
