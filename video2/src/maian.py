@@ -11,12 +11,6 @@ class ExperimentSetup(ThreeDScene):
         )
         # self.play(self.camera.frame.animate.rotate(PI / 4))
         data = self.double_slit_structure(num_slits=2, slit_width=0.6)
-        extensions = data[-1]
-        for extension in extensions:
-            self.add(extension)
-
-
-        data = data[:-1]
 
         for elem in data:
             if len(elem) == 0:
@@ -26,6 +20,7 @@ class ExperimentSetup(ThreeDScene):
                     self.add(e)
         self.wait()
 
+        
         self.sine_from_light(
             start=np.array([0, 0, 0]), end=data[2].get_center(), freq=PI, amplitude=1
         )
@@ -76,7 +71,7 @@ class ExperimentSetup(ThreeDScene):
             .shift(LEFT * 3)
             .set_color(YELLOW)
         )
-        slits, extensions = self.get_wall_with_n_slits(
+        slits = self.get_wall_with_n_slits(
             num_slits=num_slits,
             slit_width=slit_width,
             slit_distance=slit_distance,
@@ -95,35 +90,44 @@ class ExperimentSetup(ThreeDScene):
 
         # doppelspalt
 
-        return (light, slits, wall, extensions)
+        return (light, slits, wall)
 
     def get_wall_with_n_slits(
         self,
         num_slits=2,
         slit_width=0.2,
-        slit_distance=1.2,
+        slit_distance=1.2, # renamed to gap and calculated
         total_distance=35,
         height=2,
     ):
-        # DONE: extend to cover the total_distance, not just the bare minimum
-        bare_minimum = num_slits * slit_distance + (num_slits + 1) * slit_width
-        parts = []
-        for i in range(num_slits + 1):
-            cube = (
-                Cube().scale(np.array([0.05, slit_distance, height])).set_color(GREY_B)
-            )
-            
-            distance = bare_minimum / 2 - (i * slit_distance + i * slit_width) - slit_width / 2
-            cube.shift(2*distance*UP) # the 2 accounts for the scaling of the frame
-            parts.append(cube)
-        parts.sort(key=lambda x: x.get_center()[1])
+        height = 7
         
-        extensions = []
-        for i in [-1, 1]:
-            extension = Cube().scale(np.array([0.05, (total_distance - bare_minimum) / 2, height])).set_color(GREY_B).shift(bare_minimum / 2 * i * UP)
-            extension.shift(2 * i * (bare_minimum / 2 + (total_distance - bare_minimum) / 4 - slit_width / 2) * UP) # not quite sure why the - slit_width / 2 is necessary
-            extensions.append(extension)
-        return parts, extensions
+        slit_width = 0.5
+        """
+        Creates wall segments that, along with the slits, cover the entire total_distance.
+        For num_slits, there are num_slits+1 wall segments.
+        """
+        parts = []
+        # Compute the gap (height of each wall segment) using:
+        # total_distance = (num_slits+1)*gap + num_slits*slit_width
+        gap = (height - num_slits * slit_width) / (num_slits + 1)
+        
+        # The top of the wall is at total_distance/2.
+        top = height / 2
+        for i in range(num_slits + 1):
+            # Create a wall segment with the computed gap as its height.
+            wall_segment = (
+                Cube(side_length=1)
+                .scale(np.array([0.5, gap, 1]))
+                .set_color(GREY_D if i % 2 == 0 else BLUE_D)
+                #.rotate(PI / 2, UP)
+            )
+            # Place the segment so that segments and slits evenly span the total_distance.
+            center_y = top - gap / 2 - i * (gap + slit_width)
+            wall_segment.move_to(np.array([0, center_y, 0]))
+            parts.append(wall_segment)
+        return parts
+
 
     def sine_from_light(self, start, end, freq=PI, amplitude=1, rotation_angle=10):
         # TODO: https://www.youtube.com/watch?v=EmKQsSDlaa4&t=863s
