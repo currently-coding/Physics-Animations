@@ -1,6 +1,51 @@
 from PIL.Image import new
-from manim import *
-from manim.utils.color.X11 import MAGENTA
+from manim import (
+    DEGREES,
+    ParametricFunction,
+    PI,
+    UP,
+    DOWN,
+    Line,
+    Write,
+    TracedPath,
+    GrowArrow,
+    Rectangle,
+    BLACK,
+    GREEN,
+    RED,
+    BLUE,
+    ImageMobject,
+    Scene,
+    Text,
+    MathTex,
+    ThreeDScene,
+    VGroup,
+    Write,
+    config,
+    UP,
+    DOWN,
+    FadeOut,
+    Tex,
+    SVGMobject,
+    Vector,
+    LEFT,
+    RIGHT,
+    GREEN,
+    BLUE,
+    RED,
+    UL,
+    DL,
+    FadeIn,
+    ORIGIN,
+    Arrow,
+    Transform,
+    Dot,
+    MoveAlongPath,
+    DEGREES,
+    YELLOW,
+    linear,
+    Circle,
+)
 import numpy as np
 
 
@@ -12,6 +57,7 @@ class ExperimentSetup(ThreeDScene):
         # self.play(self.camera.frame.animate.rotate(PI / 4))
         data = self.double_slit_structure(num_slits=2, slit_width=0.6)
 
+        # setup experiment
         for elem in data:
             if len(elem) == 0:
                 self.add(elem)
@@ -19,8 +65,8 @@ class ExperimentSetup(ThreeDScene):
                 for e in elem:
                     self.add(e)
         self.wait()
+        # ---
 
-        return
         self.sine_from_light(
             start=np.array([0, 0, 0]), end=data[2].get_center(), freq=PI, amplitude=1
         )
@@ -28,9 +74,6 @@ class ExperimentSetup(ThreeDScene):
 
         middle_slits = []
         assert len(data[1]) >= 2
-        print("Elements")
-        for elem in data[1]:
-            print(elem.get_center())
         for idx in range(len(data[1][:-1])):  # loop through slit walls
             center_current = data[1][idx].get_center()
             center_next = data[1][idx + 1].get_center()
@@ -59,10 +102,6 @@ class ExperimentSetup(ThreeDScene):
         total_distance=35,
         height=2,
     ):
-        # BUG: only works good for even numbers
-        # odd numbers will shift everything to one side
-        # vars
-
         light = (
             Sphere(
                 radius=0.2,
@@ -152,7 +191,9 @@ class ExperimentSetup(ThreeDScene):
             start=screen.get_center() + np.array([0, 3.8, 0]),
             end=screen.get_center() + np.array([0, -3.8, 0]),
         )
-        self.move_camera(zoom=0.5, run_time=2) # camera.frame is deprecated | Zoom in (reduce the scale)
+        self.move_camera(
+            zoom=0.5, run_time=2
+        )  # camera.frame is deprecated | Zoom in (reduce the scale)
         # center_dot = Dot(np.array([0, 0, 0])) # was used for centering the cam
         # TODO: zoom in on start of lines
         # TODO: show rotation of angled line overlaps with 2nd line

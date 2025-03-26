@@ -1,0 +1,12 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/1185818338_811514922_223132457.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_504176687_2669441538.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_2844360058_1206817152.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_3246284258_1780775391.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_2844360058_1305097964.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_2149798351_1727727488.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_2844360058_1516780898.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_376566692_2890216756.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_4217992463_1202741939.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_1570028317_4285334982.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/SineCurve/624642324_2844360058_4232770709.mp4'
