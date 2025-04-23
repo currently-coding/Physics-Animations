@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/InterferenceRevealAnimated/1185818338_1388822109_2937658103.mp4'
+file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/InterferenceRevealAnimated/624642324_248220837_2305347151.mp4'
+file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/InterferenceRevealAnimated/624642324_2680087622_779483980.mp4'

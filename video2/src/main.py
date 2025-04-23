@@ -15,7 +15,6 @@ class ExperimentSetup(ThreeDScene):
         for extension in extensions:
             self.add(extension)
 
-
         data = data[:-1]
 
         for elem in data:
@@ -86,12 +85,7 @@ class ExperimentSetup(ThreeDScene):
         print("Slit: ", slits[0].get_center())
         print("Slit: ", slits[1].get_center())
         print("Slit: ", slits[2].get_center())
-        wall = (
-            Cube()
-            .scale(np.array([0.1, 7, 3]))
-            .set_color(GREY_D)
-            .shift(5 * RIGHT)
-        )
+        wall = Cube().scale(np.array([0.1, 7, 3])).set_color(GREY_D).shift(5 * RIGHT)
 
         # doppelspalt
 
@@ -112,16 +106,32 @@ class ExperimentSetup(ThreeDScene):
             cube = (
                 Cube().scale(np.array([0.05, slit_distance, height])).set_color(GREY_B)
             )
-            
-            distance = bare_minimum / 2 - (i * slit_distance + i * slit_width) - slit_width / 2
-            cube.shift(2*distance*UP) # the 2 accounts for the scaling of the frame
+
+            distance = (
+                bare_minimum / 2 - (i * slit_distance + i * slit_width) - slit_width / 2
+            )
+            cube.shift(2 * distance * UP)  # the 2 accounts for the scaling of the frame
             parts.append(cube)
         parts.sort(key=lambda x: x.get_center()[1])
-        
+
         extensions = []
         for i in [-1, 1]:
-            extension = Cube().scale(np.array([0.05, (total_distance - bare_minimum) / 2, height])).set_color(GREY_B).shift(bare_minimum / 2 * i * UP)
-            extension.shift(2 * i * (bare_minimum / 2 + (total_distance - bare_minimum) / 4 - slit_width / 2) * UP) # not quite sure why the - slit_width / 2 is necessary
+            extension = (
+                Cube()
+                .scale(np.array([0.05, (total_distance - bare_minimum) / 2, height]))
+                .set_color(GREY_B)
+                .shift(bare_minimum / 2 * i * UP)
+            )
+            extension.shift(
+                2
+                * i
+                * (
+                    bare_minimum / 2
+                    + (total_distance - bare_minimum) / 4
+                    - slit_width / 2
+                )
+                * UP
+            )  # not quite sure why the - slit_width / 2 is necessary
             extensions.append(extension)
         return parts, extensions
 
@@ -156,7 +166,9 @@ class ExperimentSetup(ThreeDScene):
             start=screen.get_center() + np.array([0, 3.8, 0]),
             end=screen.get_center() + np.array([0, -3.8, 0]),
         )
-        self.move_camera(zoom=0.5, run_time=2) # camera.frame is deprecated | Zoom in (reduce the scale)
+        self.move_camera(
+            zoom=0.5, run_time=2
+        )  # camera.frame is deprecated | Zoom in (reduce the scale)
         # center_dot = Dot(np.array([0, 0, 0])) # was used for centering the cam
         # TODO: zoom in on start of lines
         # TODO: show rotation of angled line overlaps with 2nd line

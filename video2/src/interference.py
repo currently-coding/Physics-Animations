@@ -1,32 +1,32 @@
 from manim import *
-import numpy as np
 
 
-class SineCurve3D(ThreeDScene):
+class SineWavesScene(Scene):
     def construct(self):
-        start = np.array([-1, -2, 0])  # Replace with your [x, y, z]
-        start2 = np.array([-1, 2, 0])  # Replace with your [x, y, z]
-        end = np.array([4, 0, 2])  # Replace with your [x2, y2, z2]
-        freq = 8 * PI  # Frequency of sine wave
-        amp = 0.5  # Amplitude of sine wave
-        steps = 100
+        ax = Axes(
+            x_range=[0, 14, 1],
+            y_range=[-3, 3, 1],
+            axis_config={"include_numbers": False},
+        ).add_coordinates()
 
-        # Direction vector from start to end
-        direction = end - start
-        direction2 = end - start2
+        wave1 = lambda x, t: 0.5 * np.sin(2 * PI * (0.5 * x - 0.2 * t))  # Moving right
+        wave2 = lambda x, t: 0.5 * np.sin(2 * PI * (0.5 * x + 0.2 * t))  # Moving left
+        wave_sum = lambda x, t: wave1(x, t) + wave2(x, t)
 
-        def sine_curve1(t):
-            point = start + t * direction
-            sine_offset = amp * np.sin(freq * t)
-            return point + np.array([0, sine_offset, 0])  # Add sine in y-direction
+        def get_wave_graph(func):
+            return ax.plot(lambda x: func(x, 0), color=BLUE)
 
-        def sine_curve2(t):
-            point = start2 + t * direction2
-            sine_offset = amp * np.sin(freq * t)
-            return point + np.array([0, sine_offset, 0])  # Add sine in y-direction
+        wave1_graph = always_redraw(
+            lambda: ax.plot(lambda x: wave1(x, self.time), color=BLUE)
+        )
+        wave2_graph = always_redraw(
+            lambda: ax.plot(lambda x: wave2(x, self.time), color=RED)
+        )
+        sum_graph = always_redraw(
+            lambda: ax.plot(lambda x: wave_sum(x, self.time), color=YELLOW)
+        )
 
-        curve1 = ParametricFunction(sine_curve1, t_range=[-1, 1], color=BLUE)
-        curve2 = ParametricFunction(sine_curve2, t_range=[-1, 1], color=BLUE)
-
-        self.play(Create(curve1, rate_func=linear), Create(curve2, rate_func=linear))
-        self.wait(5)
+        self.t = ValueTracker(0)
+        self.add(ax, wave1_graph, wave2_graph, sum_graph)
+        self.play(self.t.animate.set_value(10), run_time=10, rate_func=linear)
+        self.wait(3)

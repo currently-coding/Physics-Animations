@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesEntry/1185818338_2013708715_2635583168.mp4'
+file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesEntry/624642324_1118456107_72313876.mp4'
+file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesEntry/624642324_224824893_604810128.mp4'
