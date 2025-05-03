@@ -1,0 +1,6 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/philip/Github/pseminar/video2/src/media/videos/main/1080p60/partial_movie_files/ExperimentSetup/4242032193_4073845205_1183133181.mp4'
+file 'file:/home/philip/Github/pseminar/video2/src/media/videos/main/1080p60/partial_movie_files/ExperimentSetup/2796882004_789064381_1000877330.mp4'
+file 'file:/home/philip/Github/pseminar/video2/src/media/videos/main/1080p60/partial_movie_files/ExperimentSetup/3439973903_3511773843_4004885114.mp4'
+file 'file:/home/philip/Github/pseminar/video2/src/media/videos/main/1080p60/partial_movie_files/ExperimentSetup/1114573889_4054436481_2827196403.mp4'
+file 'file:/home/philip/Github/pseminar/video2/src/media/videos/main/1080p60/partial_movie_files/ExperimentSetup/1114573889_789064381_3908461337.mp4'
