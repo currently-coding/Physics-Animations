@@ -16,7 +16,6 @@ def resulting_wave(u, v, t, wave_sources):
 class Animate3DFunction(ThreeDScene):
     def construct(self):
         # Set up the 3D axes
-        axes = ThreeDAxes()
         
         # Create a ValueTracker for the time parameter
         time_tracker = ValueTracker(0)
@@ -36,10 +35,10 @@ class Animate3DFunction(ThreeDScene):
                 v, 
                 resulting_wave(u, v, time_tracker.get_value(), wave_sources)
             ]),
-            u_range=[-PI, PI],
-            v_range=[-PI, PI],
+            u_range=[-3*PI, 3*PI],
+            v_range=[-PI, 2*PI],
             resolution=(100, 100),
-            fill_opacity=0.8,
+            fill_opacity=0.7,
             checkerboard_colors=[BLUE_D],
         ))
         
@@ -49,15 +48,30 @@ class Animate3DFunction(ThreeDScene):
             for (x, y, _, _, _, _) in wave_sources
         ])
         
-        # Set a good camera orientation to view the 3D object
-        self.set_camera_orientation(phi=75 * DEGREES, theta=45 * DEGREES)
+        # Add a vertical wall at the x-coordinate of the dots
+        def my_surface(u_range):
+            return Surface(
+                lambda u, v: np.array([u, -PI, v]),
+                u_range=u_range,
+                v_range=[-3, 3],
+                resolution=(10, 10),
+                fill_opacity=1,
+                checkerboard_colors=[GRAY],
+            )
+
+        wall1 = my_surface([-3*PI, -1.2])
+        wall2 = my_surface([-0.8, 0.8])
+        wall3 = my_surface([1.2, 3*PI])
         
-        # Add the axes, wave surface, and red dots to the scene
-        self.add(axes, wave_surface, red_dots)
+        # Set a good camera orientation to view the 3D object
+        self.set_camera_orientation(phi=30 * DEGREES, theta=90 * DEGREES, zoom=1)
+        
+        # Add the axes, wave surface, red dots, wall, and wavefronts to the scene
+        self.add(wave_surface, red_dots, wall1, wall2, wall3)
         
         # Optionally, add a title as a fixed (non-moving) overlay
-        title = Text("Resulting 3D Wave").to_corner(UL)
-        self.add_fixed_in_frame_mobjects(title)
+        #title = Text("Resulting 3D Wave").to_corner(UL)
+        #self.add_fixed_in_frame_mobjects(title)
         
         # Animate the wave by updating the time parameter
         self.play(time_tracker.animate.increment_value(2 * PI), run_time=2, rate_func=linear)
