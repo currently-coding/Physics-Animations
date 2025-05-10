@@ -1,6 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves experiment/1080p60/partial_movie_files/Animate3DFunction/906669514_4077103148_773509827.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves experiment/1080p60/partial_movie_files/Animate3DFunction/79631977_233831863_3821696594.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves experiment/1080p60/partial_movie_files/Animate3DFunction/79631977_4077103148_3294733890.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves experiment/1080p60/partial_movie_files/Animate3DFunction/79631977_233831863_1545054812.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves experiment/1080p60/partial_movie_files/Animate3DFunction/79631977_3515533520_2906570830.mp4'

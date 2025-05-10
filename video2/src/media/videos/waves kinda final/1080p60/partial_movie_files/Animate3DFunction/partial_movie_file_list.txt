@@ -1,7 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves kinda final/1080p60/partial_movie_files/Animate3DFunction/906669514_2198383716_2788867869.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves kinda final/1080p60/partial_movie_files/Animate3DFunction/79631977_4077103148_2963611610.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves kinda final/1080p60/partial_movie_files/Animate3DFunction/79631977_233831863_2208717949.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves kinda final/1080p60/partial_movie_files/Animate3DFunction/79631977_4077103148_2679402029.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves kinda final/1080p60/partial_movie_files/Animate3DFunction/79631977_233831863_3840103838.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/waves kinda final/1080p60/partial_movie_files/Animate3DFunction/79631977_3515533520_1992417285.mp4'
