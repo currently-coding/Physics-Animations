@@ -1,4 +1,5 @@
 # This file is used internally by FFMPEG.
+<<<<<<< HEAD
 file 'file:/home/philip/Github/pseminar/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3977891868_1998416770_223132457.mp4'
 file 'file:/home/philip/Github/pseminar/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/2852726489_1221633805_227135816.mp4'
 file 'file:/home/philip/Github/pseminar/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/2852726489_2844360058_3603595506.mp4'
@@ -15,3 +16,23 @@ file 'file:/home/philip/Github/pseminar/video2/src/media/videos/intro/1080p60/pa
 file 'file:/home/philip/Github/pseminar/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/2852726489_4217992463_2102623250.mp4'
 file 'file:/home/philip/Github/pseminar/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/2852726489_2658391498_311611374.mp4'
 file 'file:/home/philip/Github/pseminar/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/2852726489_2552855209_2237634449.mp4'
+=======
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3529212410_500190317_223132457.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_3620745783_142646548.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_2844360058_3603595506.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_3118629661_2712971601.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_2844360058_1254155324.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_4217992463_2671000502.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_1136709007_716113709.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_2844360058_1657301474.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_3830253216_787448275.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_2552855209_1393114173.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_4217992463_4215865658.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_888609405_3103738753.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_2844360058_873454333.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_4217992463_990365359.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_3485795325_508550095.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_4217992463_3734604193.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_2658391498_2247175571.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineCurve/3040924799_2552855209_4285124186.mp4'
+>>>>>>> c06917b1 (no clue)

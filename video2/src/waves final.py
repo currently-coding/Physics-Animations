@@ -33,17 +33,19 @@ class InterferenceDemo(ThreeDScene):
     def get_wave_surface(self):
         """Surface object that updates its z‑values with self.time_tracker."""
         return Surface(
-            lambda u, v: np.array([
-                u,
-                v,
-                self.resulting_wave(u, v, self.time_tracker.get_value()),
-            ]),
+            lambda u, v: np.array(
+                [
+                    u,
+                    v,
+                    self.resulting_wave(u, v, self.time_tracker.get_value()),
+                ]
+            ),
             u_range=[-3 * PI, 3 * PI],
             v_range=[0, 3 * PI],
             resolution=(200, 200),
             fill_opacity=0.7,
             checkerboard_colors=[BLUE_D],
-            stroke_width=0
+            stroke_width=0,
         )
 
     # ---------------------------------------------------------------------
@@ -78,12 +80,12 @@ class InterferenceDemo(ThreeDScene):
             rate_func=linear,
         )
 
-        #self.play(
-        #    wave_surface.animate.set_fill(opacity=0.4), 
+        # self.play(
+        #    wave_surface.animate.set_fill(opacity=0.4),
         #    run_time=1
-        #)
+        # )
 
-        #wave_surface.set_fill(opacity=0.4)
+        # wave_surface.set_fill(opacity=0.4)
 
         self.play(Create(fringes))
 
@@ -120,11 +122,13 @@ class InterferenceDemo(ThreeDScene):
                 )
             else:
                 curve = ParametricFunction(
-                    lambda t: np.array([
-                        t,
-                        np.sqrt((c ** 2 - 4) * (c ** 2 - 4 * t ** 2) / (4 * c ** 2)),
-                        0,
-                    ]),
+                    lambda t: np.array(
+                        [
+                            t,
+                            np.sqrt((c**2 - 4) * (c**2 - 4 * t**2) / (4 * c**2)),
+                            0,
+                        ]
+                    ),
                     t_range=(-10, -c / 2) if n > 0 else (-c / 2, 10),
                     stroke_width=4,
                 )
@@ -138,8 +142,8 @@ class InterferenceDemo(ThreeDScene):
     def point_from_wavelength(self, l1, l2):
         """Coordinates of a point with d₁ = l₁ λ, d₂ = l₂ λ (from sources)."""
         d1, d2 = l1 * self.wavelength, l2 * self.wavelength
-        x = (d2 ** 2 - d1 ** 2) / 4
-        y = np.sqrt(max(d1 ** 2 - (x - 1) ** 2, 0))
+        x = (d2**2 - d1**2) / 4
+        y = np.sqrt(max(d1**2 - (x - 1) ** 2, 0))
         return np.array([x, y, 0])
 
     def length_animation(self, l1, l2):
@@ -155,52 +159,95 @@ class InterferenceDemo(ThreeDScene):
         prog1, prog2 = ValueTracker(0), ValueTracker(0)
 
         def growing_line(start, end, tracker):
-            return always_redraw(lambda: Line(
-                start,
-                start + (end - start) * tracker.get_value(),
-                color=YELLOW,
-                stroke_width=4,
-            ))
+            return always_redraw(
+                lambda: Line(
+                    start,
+                    start + (end - start) * tracker.get_value(),
+                    color=YELLOW,
+                    stroke_width=4,
+                )
+            )
 
         growing1 = growing_line(yellow_pt.get_center(), src1, prog1)
         growing2 = growing_line(yellow_pt.get_center(), src2, prog2)
 
         # Dynamic labels showing travelled distance in multiples of λ
-        label1 = always_redraw(lambda: MathTex(
-            f"{prog1.get_value() * np.linalg.norm(src1 - yellow_pt.get_center()) / self.wavelength:.1f}\\lambda"
-        ).next_to(src1, DOWN).rotate(PI).rotate(axis=RIGHT, angle=-30 * DEGREES))
+        label1 = always_redraw(
+            lambda: MathTex(
+                f"{prog1.get_value() * np.linalg.norm(src1 - yellow_pt.get_center()) / self.wavelength:.1f}\\lambda"
+            )
+            .next_to(src1, DOWN)
+            .rotate(PI)
+            .rotate(axis=RIGHT, angle=-30 * DEGREES)
+        )
 
-        label2 = always_redraw(lambda: MathTex(
-            f"{prog2.get_value() * np.linalg.norm(src2 - yellow_pt.get_center()) / self.wavelength:.1f}\\lambda"
-        ).next_to(src2, DOWN).rotate(PI).rotate(axis=RIGHT, angle=-30 * DEGREES))
+        label2 = always_redraw(
+            lambda: MathTex(
+                f"{prog2.get_value() * np.linalg.norm(src2 - yellow_pt.get_center()) / self.wavelength:.1f}\\lambda"
+            )
+            .next_to(src2, DOWN)
+            .rotate(PI)
+            .rotate(axis=RIGHT, angle=-30 * DEGREES)
+        )
 
         # Animations (moved to the end)
         self.play(Create(yellow_pt))
-        self.play(Create(line1), Create(growing1), Create(label1))  # Create first static line and label
-        self.play(prog1.animate.set_value(1), run_time=3)  # Animate growth of first yellow segment
-        
-        self.play(Create(line2), Create(growing2), Create(label2))
-        self.play(prog2.animate.set_value(1), run_time=3)  # Animate growth of second yellow segment
+        self.play(
+            Create(line1), Create(growing1), Create(label1)
+        )  # Create first static line and label
+        self.play(
+            prog1.animate.set_value(1), run_time=3
+        )  # Animate growth of first yellow segment
 
-        eq = MathTex(rf"{float(l1):.{1}f}\lambda"," - ", rf"{float(l2):.{1}f}\lambda", " = ", rf"{float(l1-l2):.{1}f}\lambda").rotate(PI).rotate(axis=RIGHT, angle=-30 * DEGREES).move_to(3*DOWN)
+        self.play(Create(line2), Create(growing2), Create(label2))
+        self.play(
+            prog2.animate.set_value(1), run_time=3
+        )  # Animate growth of second yellow segment
+
+        eq = (
+            MathTex(
+                rf"{float(l1):.{1}f}\lambda",
+                " - ",
+                rf"{float(l2):.{1}f}\lambda",
+                " = ",
+                rf"{float(l1 - l2):.{1}f}\lambda",
+            )
+            .rotate(PI)
+            .rotate(axis=RIGHT, angle=-30 * DEGREES)
+            .move_to(3 * DOWN)
+        )
         self.play(Write(eq))  # Write the equation
 
         self.wait(1)
 
-        frac = (l1 - l2) % 1          # fractional part of l1-l2        eq = MathTex(f"{label1}"," - ", f"{label2}", " = ", {l1-l2}\lambda").rotate(PI).rotate(axis=RIGHT, angle=-30 * DEGREES).move_to(3*DOWN)
+        frac = (
+            (l1 - l2) % 1
+        )  # fractional part of l1-l2        eq = MathTex(f"{label1}"," - ", f"{label2}", " = ", {l1-l2}\lambda").rotate(PI).rotate(axis=RIGHT, angle=-30 * DEGREES).move_to(3*DOWN)
 
-        if abs(frac) < 1e-6:          # ≡ 0  (integer multiple)
+        if abs(frac) < 1e-6:  # ≡ 0  (integer multiple)
             out_tex = rf"\Delta s = n\lambda"
         elif abs(frac - 0.5) < 1e-6:  # ≡ 0.5 (half-integer multiple)
-            out_tex = rf"\Delta s = \frac{"{2n+1}{2}"}\lambda"
+            out_tex = rf"\Delta s = \frac{'{2n+1}{2}'}\lambda"
 
-        final_eq = MathTex(out_tex).rotate(PI).rotate(axis=RIGHT, angle=-30 * DEGREES).move_to(eq)
+        final_eq = (
+            MathTex(out_tex)
+            .rotate(PI)
+            .rotate(axis=RIGHT, angle=-30 * DEGREES)
+            .move_to(eq)
+        )
         self.play(Transform(eq, final_eq))
 
         self.wait(1)
 
         self.remove(eq, line1, line2)  # Remove the original labels
         # Uncreate all objects
-        self.play(Uncreate(yellow_pt),
-                  Uncreate(growing1), Uncreate(growing2), Unwrite(final_eq), Unwrite(label1), Unwrite(label2))
+        self.play(
+            Uncreate(yellow_pt),
+            Uncreate(growing1),
+            Uncreate(growing2),
+            Unwrite(final_eq),
+            Unwrite(label1),
+            Unwrite(label2),
+        )
         self.wait(1)
+

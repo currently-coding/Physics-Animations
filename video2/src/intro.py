@@ -1,5 +1,11 @@
 from manim import (
+    FadeIn,
+    Text,
+    DecimalNumber,
+    LEFT,
     Tex,
+    VGroup,
+    ValueTracker,
     Transform,
     GREEN,
     YELLOW,
@@ -100,24 +106,55 @@ class SineCurve(Scene):
         self.play(Create(axes), Write(axes_labels))
 
         # Animate the sine curve developing over time
-        self.play(Create(sine_curve), run_time=4, rate_func=linear)
+        self.play(FadeIn(sine_curve))
 
         self.wait(2)
         # ---
         self.play(Create(wave_length_label), Write(wave_length_line))
         self.wait(2)
         self.remove(wave_length_line, wave_length_label)
-        # ---
+
+        self.wait(1)
         self.play(Create(amplitude_line), Write(amplitude_label))
         self.wait(2)
         self.remove(amplitude_label, amplitude_line)
         # ---
+        # ---
+        timer_tracker = ValueTracker(0)
+
+        timer_display = DecimalNumber(0, num_decimal_places=2)
+        timer_display.next_to(amplitude_label)
+        # FIX: s is centered next to the num so it needs to be shifted down a little
+        timer_label = Tex("$s$").next_to(timer_display, RIGHT, buff=0.1)
+        timer = VGroup(timer_display, timer_label).shift(LEFT * 6)
+
+        # Updater that reads the tracker value
+        timer_display.add_updater(lambda m: m.set_value(timer_tracker.get_value()))
+
+        # Manim only calls update(dt) on Mobjects in the scene, so we attach an updater to tracker
+        def update_timer(mob, dt):
+            timer_tracker.set_value(
+                timer_tracker.get_value() + dt
+            )  # increment by frame delta
+
+        timer_tracker.add_updater(update_timer)
+        self.add(
+            timer, timer_tracker
+        )  # tracker must be added to the scene for updater to work
+        # ANIMATION HERE ---
+
         self.play(
             Create(period_curve),
             Write(period_label),
             run_time=1,
             rate_func=linear,
         )
+        # ------------------
+
+        timer_tracker.clear_updaters()
+        timer_display.clear_updaters()
+        self.wait(3)
+        self.remove(timer, timer_tracker)
         self.wait(1)
         self.play(Write(frequency_label))
         self.wait(2)
@@ -134,17 +171,3 @@ class SineCurve(Scene):
         self.wait(1)
         self.play(Write(phase_speed_label_formula))
         self.wait(3)
-
-
-class WaveLengthFormula(Scene):
-    def construct(self):
-        # wanted to try smth creative...
-        # t = Tex("T", font_size=110)
-        # c = Tex("c", font_size=110)
-        # dot = Tex("$\\cdot$", font_size=110)
-        # equals = Tex("=", font_size=110)
-        # lambd = Tex("$\\lambda$", font_size=110)
-
-        formula = Tex("$\\lambda = c \\cdot T$", font_size=110)
-        self.play(Write(formula))
-        self.wait(2)

@@ -1,3 +1,11 @@
 # This file is used internally by FFMPEG.
-file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/1185818338_157667539_1432791320.mp4'
-file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_4166842112_192894876.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/1185818338_3728679574_223132457.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_2913914674_1878393079.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_2581971603_744702183.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_2844360058_4123538097.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_508558674_3006315783.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_3366045169_1586528241.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_3534643834_2995901884.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_3366045169_1782268860.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_3031116616_2828526891.mp4'
+file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_1038707267_3755701839.mp4'
