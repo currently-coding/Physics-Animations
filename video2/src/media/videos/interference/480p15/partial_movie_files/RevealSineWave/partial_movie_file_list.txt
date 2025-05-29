@@ -1,3 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/RevealSineWave/1185818338_2855307232_1034435185.mp4'
-file 'file:/home/me/Documents/projects/Physics-Animations/video2/src/media/videos/interference/480p15/partial_movie_files/RevealSineWave/624642324_667144672_3760793346.mp4'

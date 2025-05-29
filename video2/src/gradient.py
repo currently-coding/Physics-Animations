@@ -4,7 +4,6 @@ import numpy as np
 
 class FillByValueExample(MovingCameraScene):
     def construct(self):
-        resolution_fa = 34
         axes = ThreeDAxes(
             x_range=(0, 8.5, 1), y_range=(0, 8.5, 1), z_range=(-1, 1, 0.5)
         )
@@ -59,8 +58,8 @@ class FillByValueExample(MovingCameraScene):
             return sum
 
         surface_plane = Surface(
-            lambda u, v: axes.c2p(u, v, param_surface_interference(u, v)),
-            resolution=(resolution_fa, resolution_fa),
+            lambda u, v: axes.c2p(u, v, param_surface_falloff(u, v)),
+            resolution=(256, 256),
             v_range=[0, 8.5],  # updated to match axes
             u_range=[0, 8.5],  # updated to match axes
         )

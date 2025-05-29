@@ -6,8 +6,6 @@ from manim import (
     Tex,
     VGroup,
     ValueTracker,
-    Transform,
-    GREEN,
     YELLOW,
     RED,
     MathTex,
@@ -68,23 +66,22 @@ class SineCurve(Scene):
         period_label = (
             Tex("$T$", font_size=90)
             .next_to(axes.c2p(period_end, 0), DOWN)
-            .shift(RIGHT * 0.2)
-            .shift(DOWN * 0.3)
+            .shift(LEFT * 2)
+            .shift(DOWN * 1.5)
         )
         period_line = Line(start=axes.c2p(0, 0), end=axes.c2p(2 * PI, 0), color=RED)
-        frequency_label = Tex("$ = \\frac{1}{f}$", font_size=90).next_to(period_label)
+        frequency_label = Tex("$ = \\frac{1}{f} = 0.98s$", font_size=90).next_to(
+            period_label
+        )
         period_curve = axes.plot(
             lambda x: np.sin(x), color=RED, x_range=[period_start, period_end]
         )
         phase_speed_label = (
-            Tex("c", font_size=90)
+            Tex(r"$\lambda = c \cdot T = \frac{c}{f}$", font_size=90)
             .next_to(axes.c2p(0, 0), DOWN)
-            .shift(RIGHT * 0.3)
+            .shift(RIGHT * 3)
             .shift(DOWN * 1.5)
         )
-        phase_speed_label_formula = Tex(
-            r"$=\frac{\Delta x}{\Delta t}=\frac{\lambda}{T}$", font_size=90
-        ).next_to(phase_speed_label, RIGHT)
 
         amplitude_line = Line(
             start=axes.c2p(2.5 * PI, 0), end=axes.c2p(2.5 * PI, 1), color=RED
@@ -164,10 +161,9 @@ class SineCurve(Scene):
         self.play(
             Create(period_line),
             Create(period_curve),
-            Write(phase_speed_label),
             run_time=1,
             rate_func=linear,
         )
         self.wait(1)
-        self.play(Write(phase_speed_label_formula))
+        self.play(Write(phase_speed_label))
         self.wait(3)
