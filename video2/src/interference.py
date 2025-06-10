@@ -50,3 +50,9 @@ class SineWavesScene(Scene):
         self.play(
             t.animate.set_value(25), run_time=5, rate_func=linear
         )  # Continue animation
+        self.play(
+            t.animate.set_value(30), run_time=5, rate_func=linear
+        )  # Continue animation
+        self.play(
+            t.animate.set_value(35), run_time=5, rate_func=linear
+        )  # Continue animation

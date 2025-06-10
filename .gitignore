@@ -3,3 +3,4 @@ video1/src/__pycache__/
 venv/
 myenv/
 .venv/
+video2/src/media/*
