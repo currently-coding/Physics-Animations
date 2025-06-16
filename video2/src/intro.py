@@ -1,9 +1,9 @@
 from manim import (
     FadeIn,
-    Text,
     DecimalNumber,
     LEFT,
     Tex,
+    Unwrite,
     VGroup,
     ValueTracker,
     YELLOW,
@@ -82,6 +82,12 @@ class SineCurve(Scene):
             .shift(RIGHT * 3)
             .shift(DOWN * 1.5)
         )
+        phase_speed_name = (
+            Tex(r"$\vec{c}$")
+            .next_to(axes.c2p(0, 0), UP)
+            .shift(RIGHT * 1.6)
+            .shift(UP * 1.4)
+        )
 
         amplitude_line = Line(
             start=axes.c2p(2.5 * PI, 0), end=axes.c2p(2.5 * PI, 1), color=RED
@@ -121,8 +127,9 @@ class SineCurve(Scene):
 
         timer_display = DecimalNumber(0, num_decimal_places=2)
         timer_display.next_to(amplitude_label)
-        # FIX: s is centered next to the num so it needs to be shifted down a little
-        timer_label = Tex("$s$").next_to(timer_display, RIGHT, buff=0.1)
+        timer_label = (
+            Tex("$s$").next_to(timer_display, RIGHT, buff=0.1).shift(DOWN * 0.06)
+        )
         timer = VGroup(timer_display, timer_label).shift(LEFT * 6)
 
         # Updater that reads the tracker value
@@ -161,9 +168,12 @@ class SineCurve(Scene):
         self.play(
             Create(period_line),
             Create(period_curve),
+            Write(phase_speed_name),
             run_time=1,
             rate_func=linear,
         )
+        self.wait(1)
+        self.play(Unwrite(phase_speed_name))
         self.wait(1)
         self.play(Write(phase_speed_label))
         self.wait(3)
