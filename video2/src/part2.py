@@ -72,6 +72,10 @@ class DoubleSlitStatic(Scene):
         # Strahlen von S und T nach A
         ray_S = Line(start=S, end=A, color=WHITE)
         ray_T = Line(start=T, end=A, color=WHITE)
+        ray_S.set_color(BLUE)
+        ray_T.set_color(RED)
+        angle_ST = ray_T.get_angle() - ray_S.get_angle()
+        rotation_overshoot = angle_ST * 0.4
         slit_screen_line_label = (
             MathTex("l").next_to(center_line, DOWN).shift(RIGHT * 2)
         )
@@ -99,14 +103,35 @@ class DoubleSlitStatic(Scene):
         # Alle Elemente statisch hinzufügen
         self.play(FadeIn(slit_line, S_dot, T_dot, screen_line, screen_text))
         self.wait(1)
-        self.add(g_label, g_arrow)
-        self.wait(1)
         self.add(center_line, slit_screen_line_label)
         self.wait(1)
-        # self.add(ray_S)
-        # self.wait(1)
-        # self.add(ray_T)
-        # self.wait(1)
+        self.add(g_label, g_arrow)
+        self.wait(1)
+        self.add(ray_T)
+        self.wait(1)
+        self.add(ray_S)
+        self.wait(1)
+        self.play(
+            Rotate(
+                ray_S, (angle_ST + rotation_overshoot), about_point=A_dot.get_center()
+            )
+        )
+        self.play(Rotate(ray_S, -rotation_overshoot, about_point=A_dot.get_center()))
+        delta_s = Line(ray_T.get_start(), ray_S.get_start(), color=GREEN)
+        delta_s_label = MathTex("\Delta s").next_to(delta_s, UP)
+        self.wait(1)
+        self.add(delta_s, delta_s_label)
+        self.wait(1)
+        self.remove(delta_s_label)
+        self.add(F_dot, F_label)
+        self.wait(1)
+
+        self.wait(1)
+
+        self.wait(1)
+
+        self.wait(1)
+
         # self.add(M_dot)
         # self.wait(1)
         # self.add(S_label)
