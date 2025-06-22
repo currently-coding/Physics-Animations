@@ -2,34 +2,39 @@ import numpy as np
 from manim import *
 
 
-class DoubleSlitStatic(Scene):
+class DoubleSlitStatic(ZoomedScene):
     def construct(self):
         # Parameter
         g = 3.0  # Spaltabstand
         alpha = 20 * DEGREES  # Ablenkwinkel
         slit_x = -3.0  # x-Position der Spaltebene
-        plane_x = 6.0  # x-Position der Beobachtungsebene
+        screen_x = ValueTracker(6.0)  # x-Position der Beobachtungsebene
 
         # Punkte S und T (Doppelspalt) und deren Mittelpunkt M
         S = np.array([slit_x, g / 2, 0])
         T = np.array([slit_x, -g / 2, 0])
         M = (S + T) / 2
+        y_A = (screen_x.get_value() - slit_x) * np.tan(alpha) + T[1]
 
         # Beobachtungspunkt A auf der Beobachtungsebene
-        y_A = (plane_x - slit_x) * np.tan(alpha) + T[1]
-        A = np.array([plane_x, y_A, 0])
+        A = np.array(
+            [
+                screen_x.get_value(),
+                y_A,
+                0,
+            ]
+        )
 
-        # Punkt F auf der Strecke TA so, dass AF = AS
-        AS_len = np.linalg.norm(S - A)
-        TA_len = np.linalg.norm(T - A)
-        F = A + (AS_len / TA_len) * (T - A)
+        F = A + (np.linalg.norm(S - A) / np.linalg.norm(T - A)) * (T - A)
 
         # Zeichnen der optischen Achse (horizontal, gestrichelt)
-        center_line = DashedLine(
-            start=[slit_x, 0, 0],
-            end=[6, 0, 0],
-            dash_length=0.1,
-            dashed_ratio=0.5,
+        center_line = always_redraw(
+            lambda: DashedLine(
+                start=[slit_x, 0, 0],
+                end=[screen_x.get_value(), 0, 0],
+                dash_length=0.1,
+                dashed_ratio=0.5,
+            )
         )
 
         # Zeichnen der Spaltebene (vertikale Linie)
@@ -53,84 +58,138 @@ class DoubleSlitStatic(Scene):
         g_label = MathTex("g").next_to(g_arrow, LEFT)
 
         # Zeichnen der Beobachtungsebene
-        screen_line = Line(
-            start=[plane_x, -4, 0],
-            end=[plane_x, 4, 0],
+        screen_line = always_redraw(
+            lambda: Line(
+                start=[screen_x.get_value(), -4, 0],
+                end=[screen_x.get_value(), 4, 0],
+            )
         )
         screen_text = Text("Beobachtungsebene", font_size=24)
         screen_text.rotate(PI / 2).next_to(screen_line, UP, buff=0.2)
 
         # Punkte O, A und F markieren
-        O = np.array([plane_x, 0, 0])
-        O_dot = Dot(O)
+        O = np.array([screen_x.get_value(), 0, 0])
+        O_dot = always_redraw(lambda: Dot(np.array([screen_x.get_value(), 0, 0])))
         O_label = MathTex("O").next_to(O_dot, RIGHT)
-        A_dot = Dot(A)
-        A_label = MathTex("A").next_to(A_dot, RIGHT)
-        F_dot = Dot(F)
-        F_label = MathTex("F").next_to(F_dot, DOWN)
+        A_dot = always_redraw(
+            lambda: Dot(
+                np.array(
+                    [
+                        screen_x.get_value(),
+                        y_A,
+                        0,
+                    ]
+                )
+            )
+        )
+        A_label = always_redraw(lambda: MathTex("A").next_to(A_dot, RIGHT))
+        # F = A + (np.linalg.norm(S - A) / np.linalg.norm(T - A)) * (T - A)
+        F_dot = always_redraw(
+            lambda: Dot(
+                A_dot.get_center()
+                + (
+                    np.linalg.norm(S_dot.get_center() - A_dot.get_center())
+                    / np.linalg.norm(T_dot.get_center() - A_dot.get_center())
+                )
+                * (T_dot.get_center() - A_dot.get_center())
+            )
+        )
+        F_label = always_redraw(lambda: MathTex("F").next_to(F_dot, DOWN))
 
         # Strahlen von S und T nach A
-        ray_S = Line(start=S, end=A, color=WHITE)
-        ray_T = Line(start=T, end=A, color=WHITE)
-        ray_S.set_color(BLUE)
-        ray_T.set_color(RED)
+        ray_S = always_redraw(
+            lambda: Line(start=S_dot.get_center(), end=A_dot.get_center(), color=BLUE)
+        )
+        ray_T = always_redraw(
+            lambda: Line(start=T_dot.get_center(), end=A_dot.get_center(), color=RED)
+        )
 
-        angle_ST = ray_T.get_angle() - ray_S.get_angle()
+        static_ray_S = Line(
+            start=S_dot.get_center(), end=A_dot.get_center(), color=BLUE
+        )
+        static_ray_T = Line(start=T_dot.get_center(), end=A_dot.get_center(), color=RED)
+        angle_ST = static_ray_T.get_angle() - static_ray_S.get_angle()
         rotation_overshoot = angle_ST * 0.3
         slit_screen_line_label = (
             MathTex("l").next_to(center_line, DOWN).shift(RIGHT * 2)
         )
 
         # Gleichschenkliges Dreieck S-A-F darstellen (AS = AF)
-        tri_SF = DashedLine(start=S, end=F)
-        tri_SF_arc = ArcBetweenPoints(
-            start=S,
-            end=F,
-            radius=np.linalg.norm(S - A),  # radius = |AS|
+        tri_SF = always_redraw(
+            lambda: DashedLine(start=S_dot.get_center(), end=F_dot.get_center())
+        )
+        tri_SF_arc = always_redraw(
+            lambda: ArcBetweenPoints(
+                start=S_dot.get_center(),
+                end=F_dot.get_center(),
+                radius=np.linalg.norm(
+                    S_dot.get_center() - A_dot.get_center()
+                ),  # radius = |AS|
+            )
         )
         # tri_AF = Line(start=A, end=F, color=BLUE)
 
         # Strecke M-A mit Beschriftung m
-        ray_MA = Line(start=M, end=A)
-        m_label = MathTex("m").next_to(ray_MA.point_from_proportion(0.5), UP)
+        ray_MA = always_redraw(
+            lambda: Line(start=M_dot.get_center(), end=A_dot.get_center())
+        )
+        m_label = always_redraw(
+            lambda: MathTex("m").next_to(ray_MA.point_from_proportion(0.5), UP)
+        )
 
         # Dreieck FSA
-        triangle_FSA = Polygon(
-            F_dot.get_center(),
-            S_dot.get_center(),
-            A_dot.get_center(),
-            color=YELLOW,
-            fill_opacity=0.3,
-            stroke_width=2,
+        triangle_FSA = always_redraw(
+            lambda: Polygon(
+                F_dot.get_center(),
+                S_dot.get_center(),
+                A_dot.get_center(),
+                color=YELLOW,
+                fill_opacity=0.3,
+                stroke_width=2,
+            )
         )
         # Strecke T-A mit Beschriftung l
         # l_label = MathTex("l").next_to(ray_T.point_from_proportion(0.5), DOWN)
 
         # Winkel alpha am unteren Strahl darstellen
         angle_label_scale = 0.8
-        angle_AMO = Angle(center_line, ray_MA, radius=1.6)
-        AMO_label = MathTex(r"\alpha").next_to(angle_AMO, LEFT)
-        angle_TSF = Angle(Line(S, T), Line(S, F), radius=2)
-        TSF_label = (
-            MathTex(r"\sphericalangle TSF")
+        angle_AMO = always_redraw(lambda: Angle(center_line, ray_MA, radius=1.6))
+        AMO_label = always_redraw(lambda: MathTex(r"\alpha").next_to(angle_AMO, RIGHT))
+        angle_TSF = always_redraw(
+            lambda: Angle(
+                Line(S_dot.get_center(), T_dot.get_center()),
+                Line(S_dot.get_center(), F_dot.get_center()),
+                radius=2,
+            )
+        )
+        TSF_label = always_redraw(
+            lambda: MathTex(r"\sphericalangle TSF")
             .next_to(angle_TSF, LEFT)
             .shift(RIGHT * 0.2)
             .scale(angle_label_scale)
         )
-        angle_SAT = Angle(
-            Line(A, S),
-            Line(A, T),
-            radius=2.5,  # TODO: make relative to distance slit <-> screen, so the angle still shows even when A is off-screen
+        angle_SAT = always_redraw(
+            lambda: Angle(
+                Line(A_dot.get_center(), S_dot.get_center()),
+                Line(A_dot.get_center(), T_dot.get_center()),
+                radius=2.5,  # TODO: make relative to distance slit <-> screen, so the angle still shows even when A is off-screen
+            )
         )
-        SAT_label = (
-            MathTex(r"\sphericalangle SAT")
+        SAT_label = always_redraw(
+            lambda: MathTex(r"\sphericalangle SAT")
             .next_to(angle_SAT, LEFT)
             .scale(angle_label_scale)
         )
-        angle_ASF = Angle(Line(F, A), Line(F, S), radius=0.5)
-        ASF_label = (
-            MathTex(r"\sphericalangle AFS")
-            .next_to(angle_ASF, RIGHT)
+        angle_SFA = always_redraw(
+            lambda: Angle(
+                Line(F_dot.get_center(), A_dot.get_center()),
+                Line(F_dot.get_center(), S_dot.get_center()),
+                radius=0.5,
+            )
+        )
+        SFA_label = always_redraw(
+            lambda: MathTex(r"\sphericalangle AFS")
+            .next_to(angle_SFA, RIGHT)
             .shift(UP * 0.5)
             .shift(LEFT * 0.2)
             .scale(angle_label_scale)
@@ -149,21 +208,32 @@ class DoubleSlitStatic(Scene):
         self.wait(1)
         self.add(ray_S)
         self.wait(1)
+        # switch to non always_redraw lines to show rotation
+        self.remove(ray_T, ray_S)
+        self.add(static_ray_T, static_ray_S)
         self.play(
             Rotate(
-                ray_S, (angle_ST + rotation_overshoot), about_point=A_dot.get_center()
+                static_ray_S,
+                (angle_ST + rotation_overshoot),
+                about_point=A_dot.get_center(),
             )
         )
-        self.play(Rotate(ray_S, -rotation_overshoot, about_point=A_dot.get_center()))
-        delta_s = Line(ray_T.get_start(), ray_S.get_start(), color=GREEN)
-        delta_s_label = MathTex("\Delta s").next_to(delta_s, UP)
+        self.play(
+            Rotate(static_ray_S, -rotation_overshoot, about_point=A_dot.get_center())
+        )
+        delta_s = Line(static_ray_T.get_start(), static_ray_S.get_start(), color=GREEN)
+        delta_s_label = MathTex("\\Delta s").next_to(delta_s, UP)
         self.wait(1)
         self.add(delta_s, delta_s_label)
         self.wait(1)
-        self.remove(delta_s_label)
+        self.remove(delta_s_label, delta_s)
+        self.remove(static_ray_T)
+        self.add(ray_T)
         self.add(F_dot, F_label)
         self.wait(1)
-        self.play(Rotate(ray_S, -angle_ST, about_point=A_dot.get_center()))
+        self.play(Rotate(static_ray_S, -angle_ST, about_point=A_dot.get_center()))
+        self.remove(static_ray_S)
+        self.add(ray_S)
         self.add(A_dot)
         self.wait(1)
         self.add(A_label)
@@ -181,8 +251,11 @@ class DoubleSlitStatic(Scene):
         self.wait(1)
         self.add(angle_SAT, SAT_label)
         self.wait(1)
-        self.add(angle_ASF, ASF_label)
+        self.add(angle_SFA, SFA_label)
+        self.play(screen_x.animate.set_value(100), run_time=15)
         self.wait(1)
+        self.play(self.camera.frame.animate.move_to(ORIGIN))
+        self.wait(5)
 
         # self.add(M_dot)
         # self.wait(1)
