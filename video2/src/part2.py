@@ -1,3 +1,4 @@
+from manim.utils.color.AS2700 import B44_LIGHT_GREY_BLUE
 import numpy as np
 from manim import *
 
@@ -83,6 +84,14 @@ class DoubleSlitStatic(ZoomedScene):
             )
         )
         A_label = always_redraw(lambda: MathTex("A").next_to(A_dot, RIGHT))
+
+        a_k_brace = always_redraw(
+            lambda: BraceBetweenPoints(A_dot.get_center(), O_dot.get_center(), RIGHT)
+        )
+        a_k_label = always_redraw(
+            lambda: MathTex(r"a_{k}").next_to(a_k_brace, RIGHT).shift(LEFT * 0.1)
+        )
+
         # F = A + (np.linalg.norm(S - A) / np.linalg.norm(T - A)) * (T - A)
         F_dot = always_redraw(
             lambda: Dot(
@@ -94,7 +103,9 @@ class DoubleSlitStatic(ZoomedScene):
                 * (T_dot.get_center() - A_dot.get_center())
             )
         )
-        F_label = always_redraw(lambda: MathTex("F").next_to(F_dot, DOWN))
+        F_label = always_redraw(lambda: MathTex("F").next_to(F_dot, RIGHT)).shift(
+            DOWN * 0.15
+        )
 
         # Strahlen von S und T nach A
         ray_S = always_redraw(
@@ -148,13 +159,36 @@ class DoubleSlitStatic(ZoomedScene):
                 stroke_width=2,
             )
         )
-        # Strecke T-A mit Beschriftung l
-        # l_label = MathTex("l").next_to(ray_T.point_from_proportion(0.5), DOWN)
+        triangle_FST = always_redraw(
+            lambda: Polygon(
+                F_dot.get_center(),
+                S_dot.get_center(),
+                T_dot.get_center(),
+                color=BLUE,
+                fill_opacity=0.3,
+                stroke_width=2,
+            )
+        )
+
+        sine_alpha = (
+            MathTex(r"\sin \alpha = \frac{\Delta s}{g}")
+            .move_to(ORIGIN)
+            .shift(LEFT * 1.5)
+            .shift(UP * 3)
+            .shift(LEFT * 3)
+        )
+        tan_alpha = (
+            MathTex(r"\tan \alpha = \frac{a_{k}}{l}")
+            .move_to(ORIGIN)
+            .shift(RIGHT * 1.5)
+            .shift(UP * 3)
+            .shift(LEFT * 3)
+        )
 
         # Winkel alpha am unteren Strahl darstellen
         angle_label_scale = 0.8
         angle_AMO = always_redraw(lambda: Angle(center_line, ray_MA, radius=1.6))
-        AMO_label = always_redraw(lambda: MathTex(r"\alpha").next_to(angle_AMO, RIGHT))
+        AMO_label = always_redraw(lambda: MathTex(r"\alpha").next_to(angle_AMO, UP))
         angle_TSF = always_redraw(
             lambda: Angle(
                 Line(S_dot.get_center(), T_dot.get_center()),
@@ -163,10 +197,7 @@ class DoubleSlitStatic(ZoomedScene):
             )
         )
         TSF_label = always_redraw(
-            lambda: MathTex(r"\sphericalangle TSF")
-            .next_to(angle_TSF, LEFT)
-            .shift(RIGHT * 0.2)
-            .scale(angle_label_scale)
+            lambda: MathTex(r"\alpha").next_to(angle_TSF, RIGHT).shift(DOWN * 0.2)
         )
         angle_SAT = always_redraw(
             lambda: Angle(
@@ -221,40 +252,62 @@ class DoubleSlitStatic(ZoomedScene):
         self.play(
             Rotate(static_ray_S, -rotation_overshoot, about_point=A_dot.get_center())
         )
-        delta_s = Line(static_ray_T.get_start(), static_ray_S.get_start(), color=GREEN)
-        delta_s_label = MathTex("\\Delta s").next_to(delta_s, UP)
+        delta_s = always_redraw(
+            lambda: Line(static_ray_T.get_start(), F_dot.get_center(), color=GREEN)
+        )
+        delta_s_label = (
+            MathTex("\\Delta s = ")
+            .next_to(delta_s, DOWN)
+            .shift(RIGHT * 0.5)
+            .shift(DOWN * 0.1)
+        )
+
+        delta_s_length = always_redraw(
+            lambda: DecimalNumber(
+                delta_s.get_length(), num_decimal_places=2, color=WHITE
+            ).next_to(delta_s_label, RIGHT)
+        )
         self.wait(1)
-        self.add(delta_s, delta_s_label)
+        self.add(delta_s, delta_s_label, delta_s_length)
         self.wait(1)
-        self.remove(delta_s_label, delta_s)
-        self.remove(static_ray_T)
+        self.remove(static_ray_T, delta_s)
         self.add(ray_T)
+        self.add(delta_s)
         self.add(F_dot, F_label)
         self.wait(1)
         self.play(Rotate(static_ray_S, -angle_ST, about_point=A_dot.get_center()))
         self.remove(static_ray_S)
         self.add(ray_S)
         self.add(A_dot)
-        self.wait(1)
         self.add(A_label)
         self.wait(1)
-        self.play(FadeIn(triangle_FSA))
+        self.add(a_k_brace, a_k_label)
         self.wait(1)
-        self.add(tri_SF, tri_SF_arc)
-        self.play(FadeOut(triangle_FSA))
+        self.add(O_dot)
+        self.wait(1)
+        self.add(tri_SF)
+        self.wait(1)
+        self.play(FadeIn(triangle_FST))
+        self.wait(1)
+        self.play(FadeOut(triangle_FST))
+        self.wait(1)
+        self.add(sine_alpha, tan_alpha)
+        self.wait(1)
+        self.add(angle_TSF, TSF_label)
         self.wait(1)
         self.add(M_dot, M_label, ray_MA)
         self.wait(1)
         self.add(angle_AMO, AMO_label)
         self.wait(1)
-        self.add(angle_TSF, TSF_label)
-        self.wait(1)
-        self.add(angle_SAT, SAT_label)
-        self.wait(1)
-        self.add(angle_SFA, SFA_label)
+        self.camera.frame.save_state()
+        self.play(
+            self.camera.frame.animate.set(width=slit_line.get_length() * 2).move_to(
+                slit_line.get_center()
+            )
+        )
         self.play(screen_x.animate.set_value(100), run_time=15)
         self.wait(1)
-        self.play(self.camera.frame.animate.move_to(ORIGIN))
+        self.play(self.camera.frame.animate.restore())
         self.wait(5)
 
         # self.add(M_dot)
