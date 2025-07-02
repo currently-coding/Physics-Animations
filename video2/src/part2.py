@@ -1,9 +1,8 @@
-from manim.utils.color.AS2700 import B44_LIGHT_GREY_BLUE
 import numpy as np
 from manim import *
 
 
-class DoubleSlitStatic(ZoomedScene):
+class DoubleSlitFormula(ZoomedScene):
     def construct(self):
         # Parameter
         g = 3.0  # Spaltabstand
@@ -289,7 +288,15 @@ class DoubleSlitStatic(ZoomedScene):
         alpha_short = MathTex(r"\alpha = ").next_to(g_label).shift(LEFT * 3)
         alpha_val = always_redraw(
             lambda: DecimalNumber(
-                angle_AMO.get_value(), num_decimal_places=2, color=WHITE
+                np.arccos(
+                    np.dot(ray_MA.get_vector(), center_line.get_vector())
+                    / (
+                        np.linalg.norm(ray_MA.get_vector())
+                        * np.linalg.norm(center_line.get_vector())
+                    )
+                ),
+                num_decimal_places=2,
+                color=WHITE,
             ).next_to(alpha_short, RIGHT)
         )
         self.wait(1)
