@@ -15,7 +15,7 @@ class DoubleSlitStatic(ZoomedScene):
         S = np.array([slit_x, g / 2, 0])
         T = np.array([slit_x, -g / 2, 0])
         M = (S + T) / 2
-        y_A = (screen_x.get_value() - slit_x) * np.tan(alpha) + T[1]
+        y_A = (screen_x.get_value() - slit_x) * np.tan(alpha) + T[1] + 1
 
         # Beobachtungspunkt A auf der Beobachtungsebene
         A = np.array(
@@ -48,14 +48,12 @@ class DoubleSlitStatic(ZoomedScene):
         S_dot = Dot(S, color=YELLOW)
         T_dot = Dot(T, color=YELLOW)
         M_dot = Dot(M, color=WHITE)
-        S_label = MathTex("S").next_to(S_dot, LEFT)
-        T_label = MathTex("T").next_to(T_dot, LEFT)
-        M_label = MathTex("M").next_to(M_dot, LEFT)
+        S_label = MathTex("S").next_to(S_dot, LEFT).shift(UP * 0.2)
+        T_label = MathTex("T").next_to(T_dot, LEFT).shift(DOWN * 0.2)
+        M_label = MathTex("M").next_to(M_dot, LEFT).shift(LEFT * 0.2)
 
         # Abstand g markieren
-        g_arrow = DoubleArrow(
-            start=[slit_x - 1.2, -g / 2 - 0.25, 0], end=[slit_x - 1.2, g / 2 + 0.25, 0]
-        )
+        g_arrow = BraceBetweenPoints(S_dot.get_center(), T_dot.get_center(), LEFT)
         g_label = MathTex("g").next_to(g_arrow, LEFT)
 
         # Zeichnen der Beobachtungsebene
@@ -87,7 +85,7 @@ class DoubleSlitStatic(ZoomedScene):
 
         a_k_brace = always_redraw(
             lambda: BraceBetweenPoints(A_dot.get_center(), O_dot.get_center(), RIGHT)
-        )
+        ).shift(LEFT * 0.1)
         a_k_label = always_redraw(
             lambda: MathTex(r"a_{k}").next_to(a_k_brace, RIGHT).shift(LEFT * 0.1)
         )
@@ -170,21 +168,6 @@ class DoubleSlitStatic(ZoomedScene):
             )
         )
 
-        sine_alpha = (
-            MathTex(r"\sin \alpha = \frac{\Delta s}{g}")
-            .move_to(ORIGIN)
-            .shift(LEFT * 1.5)
-            .shift(UP * 3)
-            .shift(LEFT * 3)
-        )
-        tan_alpha = (
-            MathTex(r"\tan \alpha = \frac{a_{k}}{l}")
-            .move_to(ORIGIN)
-            .shift(RIGHT * 1.5)
-            .shift(UP * 3)
-            .shift(LEFT * 3)
-        )
-
         # Winkel alpha am unteren Strahl darstellen
         angle_label_scale = 0.8
         angle_AMO = always_redraw(lambda: Angle(center_line, ray_MA, radius=1.6))
@@ -197,7 +180,7 @@ class DoubleSlitStatic(ZoomedScene):
             )
         )
         TSF_label = always_redraw(
-            lambda: MathTex(r"\alpha").next_to(angle_TSF, RIGHT).shift(DOWN * 0.2)
+            lambda: MathTex(r"\alpha").next_to(angle_TSF, RIGHT).shift(DOWN * 0.1)
         )
         angle_SAT = always_redraw(
             lambda: Angle(
@@ -255,8 +238,8 @@ class DoubleSlitStatic(ZoomedScene):
         delta_s = always_redraw(
             lambda: Line(static_ray_T.get_start(), F_dot.get_center(), color=GREEN)
         )
-        delta_s_label = (
-            MathTex("\\Delta s = ")
+        delta_s_label = always_redraw(
+            lambda: MathTex("\\Delta s = ")
             .next_to(delta_s, DOWN)
             .shift(RIGHT * 0.5)
             .shift(DOWN * 0.1)
@@ -266,6 +249,48 @@ class DoubleSlitStatic(ZoomedScene):
             lambda: DecimalNumber(
                 delta_s.get_length(), num_decimal_places=2, color=WHITE
             ).next_to(delta_s_label, RIGHT)
+        )
+        # (i'm sorry for the spaghetti code...)
+        sin_alpha = (
+            MathTex(r"\sin \alpha = \frac{\Delta s}{g}")
+            .move_to(ORIGIN)
+            .shift(LEFT * 1.5)
+            .shift(UP * 3)
+            .shift(LEFT * 3)
+        )
+        tan_alpha = (
+            MathTex(r"\tan \alpha = \frac{a_{k}}{l}")
+            .move_to(ORIGIN)
+            .shift(RIGHT * 1.5)
+            .shift(UP * 3)
+            .shift(LEFT * 3)
+        )
+        tan_alpha_short = (
+            MathTex(r"\tan \alpha = ").next_to(g_label).shift(LEFT * 3).shift(DOWN)
+        )
+        tan_value = always_redraw(
+            lambda: DecimalNumber(
+                np.arctan(
+                    Line(A_dot.get_center(), O_dot.get_center()).get_length()
+                    / center_line.get_length()
+                ),
+                num_decimal_places=2,
+                color=WHITE,
+            ).next_to(tan_alpha_short, RIGHT)
+        )
+        sin_alpha_short = (
+            MathTex(r"\sin \alpha = ").next_to(g_label).shift(LEFT * 3).shift(UP)
+        )
+        sin_value = always_redraw(
+            lambda: DecimalNumber(
+                np.arcsin(delta_s.get_length() / g), num_decimal_places=2, color=WHITE
+            ).next_to(sin_alpha_short, RIGHT)
+        )
+        alpha_short = MathTex(r"\alpha = ").next_to(g_label).shift(LEFT * 3)
+        alpha_val = always_redraw(
+            lambda: DecimalNumber(
+                angle_AMO.get_value(), num_decimal_places=2, color=WHITE
+            ).next_to(alpha_short, RIGHT)
         )
         self.wait(1)
         self.add(delta_s, delta_s_label, delta_s_length)
@@ -287,25 +312,40 @@ class DoubleSlitStatic(ZoomedScene):
         self.wait(1)
         self.add(tri_SF)
         self.wait(1)
+        self.add(
+            M_dot, ray_MA
+        )  # don't show M_label unless needed as it clutters the view
+        self.wait(1)
+        self.wait(1)
+        self.add(sin_alpha)
         self.play(FadeIn(triangle_FST))
-        self.wait(1)
-        self.play(FadeOut(triangle_FST))
-        self.wait(1)
-        self.add(sine_alpha, tan_alpha)
         self.wait(1)
         self.add(angle_TSF, TSF_label)
         self.wait(1)
-        self.add(M_dot, M_label, ray_MA)
+        self.play(FadeOut(triangle_FST))
+        self.wait(1)
+        self.add(tan_alpha)
+        self.play(FadeIn(triangle_FSA))
         self.wait(1)
         self.add(angle_AMO, AMO_label)
         self.wait(1)
+        self.play(FadeOut(triangle_FSA))
+        self.wait(1)
         self.camera.frame.save_state()
+        self.add(
+            tan_alpha_short,
+            tan_value,
+            sin_alpha_short,
+            sin_value,
+            alpha_short,
+            alpha_val,
+        )
         self.play(
             self.camera.frame.animate.set(width=slit_line.get_length() * 2).move_to(
-                slit_line.get_center()
-            )
+                g_label.get_center()
+            ),
         )
-        self.play(screen_x.animate.set_value(100), run_time=15)
+        self.play(screen_x.animate.set_value(200), run_time=10)
         self.wait(1)
         self.play(self.camera.frame.animate.restore())
         self.wait(5)
