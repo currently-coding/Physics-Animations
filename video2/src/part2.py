@@ -383,3 +383,26 @@ class DoubleSlitFormula(ZoomedScene):
         # self.wait(1)
         # self.add(alpha_label)
         # (self.wait(1))
+
+
+
+        # Formelzauberei am Ende
+        # Alle bisherigen Elemente ausblenden
+        self.play(FadeOut(Group(*self.mobjects)))
+        
+        # Fortlaufende Umformung
+        umf1 = MathTex(r"\sin(\alpha) = \tan(\alpha)").scale(1.3).move_to(ORIGIN)
+        self.play(Write(umf1))
+        self.wait(1)
+        umf2 = MathTex(r"\frac{\Delta s}{g} = \frac{a_k}{l}").scale(1.3).move_to(ORIGIN)
+        self.play(TransformMatchingTex(umf1, umf2))
+        self.wait(1)
+        umf3 = MathTex(r"a_k = \frac{l \cdot \Delta s}{g}").scale(1.3).move_to(ORIGIN)
+        self.play(TransformMatchingTex(umf2, umf3))
+        self.wait(1)
+        umf4 = MathTex(r"a_k = \frac{l \cdot k \cdot \lambda}{g}").scale(1.3).move_to(ORIGIN)
+        self.play(TransformMatchingTex(umf3, umf4))
+        self.wait(1)
+        umf5 = MathTex(r"\lambda = \frac{a_k \cdot g}{l \cdot k}").scale(1.3).move_to(ORIGIN)
+        self.play(TransformMatchingTex(umf4, umf5))
+        self.wait(3)
