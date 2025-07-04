@@ -1,3 +1,4 @@
+from os import wait
 import numpy as np
 from manim import *
 
@@ -13,6 +14,7 @@ class DoubleSlitFormula(ZoomedScene):
         # Punkte S und T (Doppelspalt) und deren Mittelpunkt M
         S = np.array([slit_x, g / 2, 0])
         T = np.array([slit_x, -g / 2, 0])
+        g_line = Line(S, T)
         M = (S + T) / 2
         y_A = (screen_x.get_value() - slit_x) * np.tan(alpha) + T[1] + 1
 
@@ -265,40 +267,54 @@ class DoubleSlitFormula(ZoomedScene):
             .shift(LEFT * 3)
         )
         tan_alpha_short = (
-            MathTex(r"\tan \alpha = ").next_to(g_label).shift(LEFT * 3).shift(DOWN)
+            MathTex(r"\tan^{-1} \alpha = ").next_to(g_label).shift(LEFT * 4).shift(DOWN)
         )
         tan_value = always_redraw(
             lambda: DecimalNumber(
-                np.arctan(
-                    Line(A_dot.get_center(), O_dot.get_center()).get_length()
-                    / center_line.get_length()
+                np.rad2deg(
+                    np.arctan(
+                        np.arctan(
+                            Line(A_dot.get_center(), O_dot.get_center()).get_length()
+                            / center_line.get_length()
+                        )
+                    )
                 ),
                 num_decimal_places=2,
                 color=WHITE,
             ).next_to(tan_alpha_short, RIGHT)
         )
+        tan_alpha_end = MathTex(r"^{\circ}").next_to(tan_value, buff=0)
+        tan = VGroup(tan_alpha_short, tan_value, tan_alpha_end)
         sin_alpha_short = (
-            MathTex(r"\sin \alpha = ").next_to(g_label).shift(LEFT * 3).shift(UP)
+            MathTex(r"\sin^{-1} \alpha = ").next_to(g_label).shift(LEFT * 4).shift(UP)
         )
         sin_value = always_redraw(
             lambda: DecimalNumber(
-                np.arcsin(delta_s.get_length() / g), num_decimal_places=2, color=WHITE
+                np.rad2deg(np.arcsin(delta_s.get_length() / g_line.get_length())),
+                num_decimal_places=2,
+                color=WHITE,
             ).next_to(sin_alpha_short, RIGHT)
         )
+        sin_alpha_end = MathTex(r"^{\circ}").next_to(sin_value, buff=0)
+        sin = VGroup(sin_alpha_short, sin_value, sin_alpha_end)
         alpha_short = MathTex(r"\alpha = ").next_to(g_label).shift(LEFT * 3)
         alpha_val = always_redraw(
             lambda: DecimalNumber(
-                np.arccos(
-                    np.dot(ray_MA.get_vector(), center_line.get_vector())
-                    / (
-                        np.linalg.norm(ray_MA.get_vector())
-                        * np.linalg.norm(center_line.get_vector())
+                np.rad2deg(
+                    np.arccos(
+                        np.dot(ray_MA.get_vector(), center_line.get_vector())
+                        / (
+                            np.linalg.norm(ray_MA.get_vector())
+                            * np.linalg.norm(center_line.get_vector())
+                        )
                     )
                 ),
                 num_decimal_places=2,
                 color=WHITE,
             ).next_to(alpha_short, RIGHT)
         )
+        alpha_end = MathTex(r"^{\circ}").next_to(alpha_val, buff=0)
+        alpha_group = VGroup(alpha_short, alpha_val, alpha_end)
         self.wait(1)
         self.add(delta_s, delta_s_label, delta_s_length)
         self.wait(1)
@@ -339,57 +355,21 @@ class DoubleSlitFormula(ZoomedScene):
         self.play(FadeOut(triangle_FSA))
         self.wait(1)
         self.camera.frame.save_state()
-        self.add(
-            tan_alpha_short,
-            tan_value,
-            sin_alpha_short,
-            sin_value,
-            alpha_short,
-            alpha_val,
-        )
+        self.add(sin, tan, alpha_group)
         self.play(
             self.camera.frame.animate.set(width=slit_line.get_length() * 2).move_to(
                 g_label.get_center()
             ),
         )
-        self.play(screen_x.animate.set_value(200), run_time=10)
+        self.play(screen_x.animate.set_value(500), run_time=10, rate_func=linear)
         self.wait(1)
         self.play(self.camera.frame.animate.restore())
         self.wait(5)
 
-        # self.add(M_dot)
-        # self.wait(1)
-        # self.add(M_label)
-        # self.wait(1)
-        # self.add(g_arrow)
-        # self.wait(1)
-        # self.add(g_label)
-        # self.wait(1)
-        # self.add(O_dot)
-        # self.wait(1)
-        # self.add(O_label)
-        # self.wait(1)
-        # self.add(tri_SF_arc)
-        # self.wait(1)
-        # self.add(tri_SF)
-        # self.wait(1)
-        # self.add(ray_MA)
-        # self.wait(1)
-        # self.add(m_label)
-        # self.wait(1)
-        # self.add(slit_screen_line_label)
-        # self.wait(1)
-        # self.add(angle_arc)
-        # self.wait(1)
-        # self.add(alpha_label)
-        # (self.wait(1))
-
-
-
         # Formelzauberei am Ende
         # Alle bisherigen Elemente ausblenden
         self.play(FadeOut(Group(*self.mobjects)))
-        
+
         # Fortlaufende Umformung
         umf1 = MathTex(r"\sin(\alpha) = \tan(\alpha)").scale(1.3).move_to(ORIGIN)
         self.play(Write(umf1))
@@ -400,9 +380,18 @@ class DoubleSlitFormula(ZoomedScene):
         umf3 = MathTex(r"a_k = \frac{l \cdot \Delta s}{g}").scale(1.3).move_to(ORIGIN)
         self.play(TransformMatchingTex(umf2, umf3))
         self.wait(1)
-        umf4 = MathTex(r"a_k = \frac{l \cdot k \cdot \lambda}{g}").scale(1.3).move_to(ORIGIN)
+        umf4 = (
+            MathTex(r"a_k = \frac{l \cdot k \cdot \lambda}{g}")
+            .scale(1.3)
+            .move_to(ORIGIN)
+        )
         self.play(TransformMatchingTex(umf3, umf4))
         self.wait(1)
-        umf5 = MathTex(r"\lambda = \frac{a_k \cdot g}{l \cdot k}").scale(1.3).move_to(ORIGIN)
+        umf5 = (
+            MathTex(r"\lambda = \frac{a_k \cdot g}{l \cdot k}")
+            .scale(1.3)
+            .move_to(ORIGIN)
+        )
         self.play(TransformMatchingTex(umf4, umf5))
         self.wait(3)
+
