@@ -1,4 +1,3 @@
-from os import wait
 import numpy as np
 from manim import *
 
@@ -283,8 +282,17 @@ class DoubleSlitFormula(ZoomedScene):
                 color=WHITE,
             ).next_to(tan_alpha_short, RIGHT)
         )
-        tan_alpha_end = MathTex(r"^{\circ}").next_to(tan_value, buff=0)
-        tan = VGroup(tan_alpha_short, tan_value, tan_alpha_end)
+        tan_alpha_end = (
+            MathTex(r"^{\circ}")
+            .next_to(tan_value, buff=0)
+            .shift(LEFT * 0.1)
+            .shift(UP * 0.1)
+        )
+        tan = (
+            VGroup(tan_alpha_short, tan_value, tan_alpha_end)
+            .next_to(g_label, LEFT)
+            .shift(DOWN * 1)
+        )
         sin_alpha_short = (
             MathTex(r"\sin^{-1} \alpha = ").next_to(g_label).shift(LEFT * 4).shift(UP)
         )
@@ -295,8 +303,17 @@ class DoubleSlitFormula(ZoomedScene):
                 color=WHITE,
             ).next_to(sin_alpha_short, RIGHT)
         )
-        sin_alpha_end = MathTex(r"^{\circ}").next_to(sin_value, buff=0)
-        sin = VGroup(sin_alpha_short, sin_value, sin_alpha_end)
+        sin_alpha_end = (
+            MathTex(r"^{\circ}")
+            .next_to(sin_value, buff=0)
+            .shift(UP * 0.1)
+            .shift(LEFT * 0.1)
+        )
+        sin = (
+            VGroup(sin_alpha_short, sin_value, sin_alpha_end)
+            .next_to(g_label, LEFT)
+            .shift(UP * 1)
+        )
         alpha_short = MathTex(r"\alpha = ").next_to(g_label).shift(LEFT * 3)
         alpha_val = always_redraw(
             lambda: DecimalNumber(
@@ -313,8 +330,13 @@ class DoubleSlitFormula(ZoomedScene):
                 color=WHITE,
             ).next_to(alpha_short, RIGHT)
         )
-        alpha_end = MathTex(r"^{\circ}").next_to(alpha_val, buff=0)
-        alpha_group = VGroup(alpha_short, alpha_val, alpha_end)
+        alpha_end = (
+            MathTex(r"^{\circ}")
+            .next_to(alpha_val, buff=0)
+            .shift(LEFT * 0.1)
+            .shift(UP * 0.1)
+        )
+        alpha_group = VGroup(alpha_short, alpha_val, alpha_end).next_to(g_label, LEFT)
         self.wait(1)
         self.add(delta_s, delta_s_label, delta_s_length)
         self.wait(1)
@@ -362,7 +384,8 @@ class DoubleSlitFormula(ZoomedScene):
             ),
         )
         self.play(screen_x.animate.set_value(500), run_time=10, rate_func=linear)
-        self.wait(1)
+        self.wait(2)
+        # self.play(FadeOut(sin, tan, alpha_group))
         self.play(self.camera.frame.animate.restore())
         self.wait(5)
 
@@ -394,4 +417,3 @@ class DoubleSlitFormula(ZoomedScene):
         )
         self.play(TransformMatchingTex(umf4, umf5))
         self.wait(3)
-
