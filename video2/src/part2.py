@@ -9,24 +9,15 @@ class DoubleSlitFormula(ZoomedScene):
         alpha = 20 * DEGREES  # Ablenkwinkel
         slit_x = -3.0  # x-Position der Spaltebene
         screen_x = ValueTracker(6.0)  # x-Position der Beobachtungsebene
+        original_screen_x = screen_x
 
         # Punkte S und T (Doppelspalt) und deren Mittelpunkt M
         S = np.array([slit_x, g / 2, 0])
         T = np.array([slit_x, -g / 2, 0])
         g_line = Line(S, T)
         M = (S + T) / 2
-        y_A = (screen_x.get_value() - slit_x) * np.tan(alpha) + T[1] + 1
 
         # Beobachtungspunkt A auf der Beobachtungsebene
-        A = np.array(
-            [
-                screen_x.get_value(),
-                y_A,
-                0,
-            ]
-        )
-
-        F = A + (np.linalg.norm(S - A) / np.linalg.norm(T - A)) * (T - A)
 
         # Zeichnen der optischen Achse (horizontal, gestrichelt)
         center_line = always_redraw(
@@ -56,15 +47,12 @@ class DoubleSlitFormula(ZoomedScene):
         g_arrow = BraceBetweenPoints(S_dot.get_center(), T_dot.get_center(), LEFT)
         g_label = MathTex("g").next_to(g_arrow, LEFT)
 
-        # Zeichnen der Beobachtungsebene
         screen_line = always_redraw(
             lambda: Line(
                 start=[screen_x.get_value(), -4, 0],
                 end=[screen_x.get_value(), 4, 0],
             )
         )
-        screen_text = Text("Beobachtungsebene", font_size=24)
-        screen_text.rotate(PI / 2).next_to(screen_line, UP, buff=0.2)
 
         # Punkte O, A und F markieren
         O = np.array([screen_x.get_value(), 0, 0])
@@ -75,7 +63,7 @@ class DoubleSlitFormula(ZoomedScene):
                 np.array(
                     [
                         screen_x.get_value(),
-                        y_A,
+                        (screen_x.get_value() - slit_x) * np.tan(alpha) + T[1],
                         0,
                     ]
                 )
@@ -85,7 +73,7 @@ class DoubleSlitFormula(ZoomedScene):
 
         a_k_brace = always_redraw(
             lambda: BraceBetweenPoints(A_dot.get_center(), O_dot.get_center(), RIGHT)
-        ).shift(LEFT * 0.1)
+        ).shift(LEFT * 0.2)
         a_k_label = always_redraw(
             lambda: MathTex(r"a_{k}").next_to(a_k_brace, RIGHT).shift(LEFT * 0.1)
         )
@@ -101,8 +89,8 @@ class DoubleSlitFormula(ZoomedScene):
                 * (T_dot.get_center() - A_dot.get_center())
             )
         )
-        F_label = always_redraw(lambda: MathTex("F").next_to(F_dot, RIGHT)).shift(
-            DOWN * 0.15
+        F_label = always_redraw(
+            lambda: MathTex("F").next_to(F_dot, RIGHT).shift(DOWN * 0.3)
         )
 
         # Strahlen von S und T nach A
@@ -186,33 +174,20 @@ class DoubleSlitFormula(ZoomedScene):
             lambda: Angle(
                 Line(A_dot.get_center(), S_dot.get_center()),
                 Line(A_dot.get_center(), T_dot.get_center()),
-                radius=2.5,  # TODO: make relative to distance slit <-> screen, so the angle still shows even when A is off-screen
+                radius=ray_S.get_length()
+                - 2,  # BUG: the line jumps in the animation - pls fix :)
             )
         )
         SAT_label = always_redraw(
             lambda: MathTex(r"\sphericalangle SAT")
-            .next_to(angle_SAT, LEFT)
-            .scale(angle_label_scale)
-        )
-        angle_SFA = always_redraw(
-            lambda: Angle(
-                Line(F_dot.get_center(), A_dot.get_center()),
-                Line(F_dot.get_center(), S_dot.get_center()),
-                radius=0.5,
-            )
-        )
-        SFA_label = always_redraw(
-            lambda: MathTex(r"\sphericalangle AFS")
-            .next_to(angle_SFA, RIGHT)
-            .shift(UP * 0.5)
+            .next_to(angle_SAT, RIGHT)
             .shift(LEFT * 0.2)
+            .shift(UP * 0.75)
             .scale(angle_label_scale)
         )
 
         # Alle Elemente statisch hinzufügen
-        self.play(
-            FadeIn(slit_line, S_dot, T_dot, screen_line, screen_text, S_label, T_label)
-        )
+        self.play(FadeIn(slit_line, S_dot, T_dot, screen_line, S_label, T_label))
         self.wait(1)
         self.add(center_line, slit_screen_line_label)
         self.wait(1)
@@ -239,7 +214,7 @@ class DoubleSlitFormula(ZoomedScene):
             lambda: Line(static_ray_T.get_start(), F_dot.get_center(), color=GREEN)
         )
         delta_s_label = always_redraw(
-            lambda: MathTex("\\Delta s = ")
+            lambda: MathTex("\\Delta s = \\text{ ?}")
             .next_to(delta_s, DOWN)
             .shift(RIGHT * 0.5)
             .shift(DOWN * 0.1)
@@ -337,13 +312,15 @@ class DoubleSlitFormula(ZoomedScene):
             .shift(UP * 0.1)
         )
         alpha_group = VGroup(alpha_short, alpha_val, alpha_end).next_to(g_label, LEFT)
+
         self.wait(1)
-        self.add(delta_s, delta_s_label, delta_s_length)
-        self.wait(1)
-        self.remove(static_ray_T, delta_s)
-        self.add(ray_T)
-        self.add(delta_s)
         self.add(F_dot, F_label)
+        self.wait(1)
+        self.add(delta_s, delta_s_label)
+        self.wait(1)
+        self.remove(static_ray_T, delta_s, static_ray_S)
+        self.add(ray_T, static_ray_S)
+        self.add(delta_s)
         self.wait(1)
         self.play(Rotate(static_ray_S, -angle_ST, about_point=A_dot.get_center()))
         self.remove(static_ray_S)
@@ -361,59 +338,81 @@ class DoubleSlitFormula(ZoomedScene):
             M_dot, ray_MA
         )  # don't show M_label unless needed as it clutters the view
         self.wait(1)
-        self.wait(1)
-        self.add(sin_alpha)
-        self.play(FadeIn(triangle_FST))
-        self.wait(1)
-        self.add(angle_TSF, TSF_label)
-        self.wait(1)
-        self.play(FadeOut(triangle_FST))
-        self.wait(1)
-        self.add(tan_alpha)
-        self.play(FadeIn(triangle_FSA))
-        self.wait(1)
-        self.add(angle_AMO, AMO_label)
-        self.wait(1)
-        self.play(FadeOut(triangle_FSA))
+        # self.wait(1)
+        # self.add(sin_alpha)
+        # self.play(FadeIn(triangle_FST))
+        # self.wait(1)
+        # self.add(angle_TSF, TSF_label)
+        # self.wait(1)
+        # self.play(FadeOut(triangle_FST))
+        # self.wait(1)
+        # self.add(tan_alpha)
+        # self.play(FadeIn(triangle_FSA))
+        # self.wait(1)
+        # self.add(angle_AMO, AMO_label)
+        # self.wait(1)
+        # self.play(FadeOut(triangle_FSA))
+        # self.wait(1)
+        # self.add(sin, tan, alpha_group)
+        #
+        #
+        self.add(angle_SAT, SAT_label)
         self.wait(1)
         self.camera.frame.save_state()
-        self.add(sin, tan, alpha_group)
-        self.play(
-            self.camera.frame.animate.set(width=slit_line.get_length() * 2).move_to(
-                g_label.get_center()
-            ),
-        )
-        self.play(screen_x.animate.set_value(500), run_time=10, rate_func=linear)
+        self.wait(1)
+        self.play(self.camera.frame.animate.set(width=slit_line.get_length() * 2))
+        self.wait(1)
+        self.play(screen_x.animate.set_value(100), run_time=10, rate_func=linear)
         self.wait(2)
-        # self.play(FadeOut(sin, tan, alpha_group))
         self.play(self.camera.frame.animate.restore())
+        self.wait(1)
+        self.play(screen_x.animate.set_value(6), run_time=5, rate_func=linear)
+        self.wait(2)
+        self.play(FadeIn(triangle_FST))
+        self.wait(1)
+        self.add(angle_TSF)
+        self.wait(1)
+        self.add(sin_alpha)
+        self.wait(1)
+        self.play(FadeOut(triangle_FST))
+        self.wait(2)
+        self.play(FadeIn(triangle_FSA))
+        self.wait(1)
+        self.add(angle_AMO)
+        self.wait(1)
+        self.add(tan_alpha)
+        self.wait(1)
+        self.play(FadeOut(triangle_FSA))
         self.wait(5)
 
         # Formelzauberei am Ende
         # Alle bisherigen Elemente ausblenden
-        self.play(FadeOut(Group(*self.mobjects)))
 
-        # Fortlaufende Umformung
-        umf1 = MathTex(r"\sin(\alpha) = \tan(\alpha)").scale(1.3).move_to(ORIGIN)
-        self.play(Write(umf1))
-        self.wait(1)
-        umf2 = MathTex(r"\frac{\Delta s}{g} = \frac{a_k}{l}").scale(1.3).move_to(ORIGIN)
-        self.play(TransformMatchingTex(umf1, umf2))
-        self.wait(1)
-        umf3 = MathTex(r"a_k = \frac{l \cdot \Delta s}{g}").scale(1.3).move_to(ORIGIN)
-        self.play(TransformMatchingTex(umf2, umf3))
-        self.wait(1)
-        umf4 = (
-            MathTex(r"a_k = \frac{l \cdot k \cdot \lambda}{g}")
-            .scale(1.3)
-            .move_to(ORIGIN)
-        )
-        self.play(TransformMatchingTex(umf3, umf4))
-        self.wait(1)
-        umf5 = (
-            MathTex(r"\lambda = \frac{a_k \cdot g}{l \cdot k}")
-            .scale(1.3)
-            .move_to(ORIGIN)
-        )
-        self.play(TransformMatchingTex(umf4, umf5))
-        self.wait(3)
+
+# COMMENT OUT FOR FASTER RENDERING
+# self.play(FadeOut(Group(*self.mobjects)))
+#
+# # Fortlaufende Umformung
+# umf1 = MathTex(r"\sin(\alpha) = \tan(\alpha)").scale(1.3).move_to(ORIGIN)
+# self.play(Write(umf1))
+# self.wait(1)
+# umf2 = MathTex(r"\frac{\Delta s}{g} = \frac{a_k}{l}").scale(1.3).move_to(ORIGIN)
+# self.play(TransformMatchingTex(umf1, umf2))
+# self.wait(1)
+# umf3 = MathTex(r"a_k = \frac{l \cdot \Delta s}{g}").scale(1.3).move_to(ORIGIN)
+# self.play(TransformMatchingTex(umf2, umf3))
+# self.wait(1)
+# umf4 = (
+#     MathTex(r"a_k = \frac{l \cdot k \cdot \lambda}{g}")
+#     .scale(1.3)
+#     .move_to(ORIGIN)
+# )
+# self.play(TransformMatchingTex(umf3, umf4))
+# self.wait(1)
+# umf5 = (
+#     MathTex(r"\lambda = \frac{a_k \cdot g}{l \cdot k}")
+#     .scale(1.3)
+#     .move_to(ORIGIN)
+# )
+# self.play(TransformMatchingTex(umf4, umf5))
+# self.wait(3)
