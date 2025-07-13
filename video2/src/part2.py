@@ -9,7 +9,6 @@ class DoubleSlitFormula(ZoomedScene):
         alpha = 20 * DEGREES  # Ablenkwinkel
         slit_x = -3.0  # x-Position der Spaltebene
         screen_x = ValueTracker(6.0)  # x-Position der Beobachtungsebene
-        original_screen_x = screen_x
 
         # Punkte S und T (Doppelspalt) und deren Mittelpunkt M
         S = np.array([slit_x, g / 2, 0])
@@ -63,7 +62,9 @@ class DoubleSlitFormula(ZoomedScene):
                 np.array(
                     [
                         screen_x.get_value(),
-                        (screen_x.get_value() - slit_x) * np.tan(alpha) + T[1],
+                        M[1]
+                        + (screen_x.get_value() - M[0])
+                        * np.tan(alpha),  # compute y from x
                         0,
                     ]
                 )
@@ -174,16 +175,38 @@ class DoubleSlitFormula(ZoomedScene):
             lambda: Angle(
                 Line(A_dot.get_center(), S_dot.get_center()),
                 Line(A_dot.get_center(), T_dot.get_center()),
-                radius=ray_S.get_length()
-                - 2,  # BUG: the line jumps in the animation - pls fix :)
+                radius=2,
             )
         )
         SAT_label = always_redraw(
-            lambda: MathTex(r"\sphericalangle SAT")
-            .next_to(angle_SAT, RIGHT)
+            lambda: MathTex(r"\sphericalangle SAT = ")
+            .next_to(S_dot, RIGHT)
             .shift(LEFT * 0.2)
-            .shift(UP * 0.75)
+            .shift(DOWN * 0.1)
             .scale(angle_label_scale)
+        )
+        SAT_value = always_redraw(
+            lambda: DecimalNumber(
+                np.rad2deg(
+                    angle_between_vectors(
+                        S_dot.get_center() - A_dot.get_center(),
+                        T_dot.get_center() - A_dot.get_center(),
+                    )
+                ),
+                num_decimal_places=2,
+                color=WHITE,
+            ).next_to(SAT_label, RIGHT)
+        )
+        SAT_degree = always_redraw(
+            lambda: MathTex(r"{}^{\circ}").next_to(SAT_value, RIGHT, buff=0.1)
+        )
+        SAT = always_redraw(
+            lambda: VGroup(
+                angle_SAT,
+                SAT_value,
+                SAT_label,
+                SAT_degree,
+            )
         )
 
         # Alle Elemente statisch hinzufügen
@@ -356,21 +379,20 @@ class DoubleSlitFormula(ZoomedScene):
         # self.add(sin, tan, alpha_group)
         #
         #
-        self.add(angle_SAT, SAT_label)
+        self.add(SAT)
         self.wait(1)
         self.camera.frame.save_state()
         self.wait(1)
         self.play(self.camera.frame.animate.set(width=slit_line.get_length() * 2))
         self.wait(1)
-        self.play(screen_x.animate.set_value(100), run_time=10, rate_func=linear)
+		self.play(screen_x.animate.set_value(500), run_time=10, rate_func=ease_in) # BUG: that should exist according to https://docs.manim.community/en/stable/reference/manim.utils.rate_functions.html#module-manim.utils.rate_functions
         self.wait(2)
-        self.play(self.camera.frame.animate.restore())
+        self.play(screen_x.animate.set_value(6), run_time=2, rate_func=ease_out)
+        self.play(self.camera.frame.animate.restore(), run_time=4)
         self.wait(1)
-        self.play(screen_x.animate.set_value(6), run_time=5, rate_func=linear)
-        self.wait(2)
         self.play(FadeIn(triangle_FST))
         self.wait(1)
-        self.add(angle_TSF)
+        self.add(angle_TSF, TSF_label)
         self.wait(1)
         self.add(sin_alpha)
         self.wait(1)
@@ -378,7 +400,7 @@ class DoubleSlitFormula(ZoomedScene):
         self.wait(2)
         self.play(FadeIn(triangle_FSA))
         self.wait(1)
-        self.add(angle_AMO)
+        self.add(angle_AMO, AMO_label)
         self.wait(1)
         self.add(tan_alpha)
         self.wait(1)
@@ -388,30 +410,30 @@ class DoubleSlitFormula(ZoomedScene):
         # Formelzauberei am Ende
         # Alle bisherigen Elemente ausblenden
 
-        # COMMENT OUT FOR FASTER RENDERING
-        self.play(FadeOut(Group(*self.mobjects)))
-
-        # Fortlaufende Umformung
-        umf1 = MathTex(r"\sin(\alpha) = \tan(\alpha)").scale(1.3).move_to(ORIGIN)
-        self.play(Write(umf1))
-        self.wait(1)
-        umf2 = MathTex(r"\frac{\Delta s}{g} = \frac{a_k}{l}").scale(1.3).move_to(ORIGIN)
-        self.play(TransformMatchingTex(umf1, umf2))
-        self.wait(1)
-        umf3 = MathTex(r"a_k = \frac{l \cdot \Delta s}{g}").scale(1.3).move_to(ORIGIN)
-        self.play(TransformMatchingTex(umf2, umf3))
-        self.wait(1)
-        umf4 = (
-            MathTex(r"a_k = \frac{l \cdot k \cdot \lambda}{g}")
-            .scale(1.3)
-            .move_to(ORIGIN)
-        )
-        self.play(TransformMatchingTex(umf3, umf4))
-        self.wait(1)
-        umf5 = (
-            MathTex(r"\lambda = \frac{a_k \cdot g}{l \cdot k}")
-            .scale(1.3)
-            .move_to(ORIGIN)
-        )
-        self.play(TransformMatchingTex(umf4, umf5))
-        self.wait(3)
+        # COMMENTED OUT FOR FASTER RENDERING
+        # self.play(FadeOut(Group(*self.mobjects)))
+        #
+        # # Fortlaufende Umformung
+        # umf1 = MathTex(r"\sin(\alpha) = \tan(\alpha)").scale(1.3).move_to(ORIGIN)
+        # self.play(Write(umf1))
+        # self.wait(1)
+        # umf2 = MathTex(r"\frac{\Delta s}{g} = \frac{a_k}{l}").scale(1.3).move_to(ORIGIN)
+        # self.play(TransformMatchingTex(umf1, umf2))
+        # self.wait(1)
+        # umf3 = MathTex(r"a_k = \frac{l \cdot \Delta s}{g}").scale(1.3).move_to(ORIGIN)
+        # self.play(TransformMatchingTex(umf2, umf3))
+        # self.wait(1)
+        # umf4 = (
+        #     MathTex(r"a_k = \frac{l \cdot k \cdot \lambda}{g}")
+        #     .scale(1.3)
+        #     .move_to(ORIGIN)
+        # )
+        # self.play(TransformMatchingTex(umf3, umf4))
+        # self.wait(1)
+        # umf5 = (
+        #     MathTex(r"\lambda = \frac{a_k \cdot g}{l \cdot k}")
+        #     .scale(1.3)
+        #     .move_to(ORIGIN)
+        # )
+        # self.play(TransformMatchingTex(umf4, umf5))
+        # self.wait(3)
