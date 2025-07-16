@@ -1,9 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/me/Documents/software/physics-animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/1185818338_2653532201_223132457.mp4'
-file 'file:/home/me/Documents/software/physics-animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_3701494514_1849650520.mp4'
-file 'file:/home/me/Documents/software/physics-animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_3166714385_727962632.mp4'
-file 'file:/home/me/Documents/software/physics-animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_3266166382_1570037929.mp4'
-file 'file:/home/me/Documents/software/physics-animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_1013027448_2252778294.mp4'
-file 'file:/home/me/Documents/software/physics-animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_3893453015_1598131730.mp4'
-file 'file:/home/me/Documents/software/physics-animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_2011243693_78438197.mp4'
-file 'file:/home/me/Documents/software/physics-animations/video2/src/media/videos/interference/480p15/partial_movie_files/SineWavesScene/624642324_1196808063_3159078017.mp4'

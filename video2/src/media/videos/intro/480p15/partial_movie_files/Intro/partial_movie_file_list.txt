@@ -1,3 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/Intro/3779917863_3407920345_2908784964.mp4'
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/480p15/partial_movie_files/Intro/1877263254_310462277_1843003794.mp4'

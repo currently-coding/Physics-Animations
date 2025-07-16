@@ -1,3 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineWaveFromSource/3529212410_1302728265_3436153757.mp4'
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/intro/1080p60/partial_movie_files/SineWaveFromSource/3040924799_2834709167_2607036659.mp4'

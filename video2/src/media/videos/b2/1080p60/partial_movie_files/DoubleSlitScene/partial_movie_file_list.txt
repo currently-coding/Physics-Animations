@@ -1,3 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/b2/1080p60/partial_movie_files/DoubleSlitScene/3977891868_769533576_1876163358.mp4'
-file 'file:/home/philip/Github/pseminar/video2/src/media/videos/b2/1080p60/partial_movie_files/DoubleSlitScene/2852726489_2844360058_3614634126.mp4'
