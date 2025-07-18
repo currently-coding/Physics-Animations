@@ -1,5 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/main/480p15/partial_movie_files/Video/238433677_4073845205_1368848101.mp4'
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/main/480p15/partial_movie_files/Video/432527821_789064381_2375885274.mp4'
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/main/480p15/partial_movie_files/Video/432527821_4190265679_2102148534.mp4'
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/main/480p15/partial_movie_files/Video/432527821_789064381_33637818.mp4'

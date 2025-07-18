@@ -1,2 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/me/Documents/software/Physics-Animations/video2/src/media/videos/main/480p15/partial_movie_files/SineWithoutAxes/1185818338_634017564_3656136096.mp4'

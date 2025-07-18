@@ -30,8 +30,8 @@ class DoubleSlitFormula(ZoomedScene):
 
         # Zeichnen der Spaltebene (vertikale Linie)
         slit_line = Line(
-            start=[slit_x, g / 2 + 0.5, 0],
-            end=[slit_x, -g / 2 - 0.5, 0],
+            start=np.array([slit_x, g / 2 + 0.5, 0]),
+            end=np.array([slit_x, -g / 2 - 0.5, 0]),
         )
 
         # Punktquellen und Labels
@@ -48,8 +48,8 @@ class DoubleSlitFormula(ZoomedScene):
 
         screen_line = always_redraw(
             lambda: Line(
-                start=[screen_x.get_value(), -4, 0],
-                end=[screen_x.get_value(), 4, 0],
+                start=np.array([screen_x.get_value(), -4, 0]),
+                end=np.array([screen_x.get_value(), 4, 0]),
             )
         )
 
@@ -62,9 +62,7 @@ class DoubleSlitFormula(ZoomedScene):
                 np.array(
                     [
                         screen_x.get_value(),
-                        M[1]
-                        + (screen_x.get_value() - M[0])
-                        * np.tan(alpha),  # compute y from x
+                        1.3 * S[1], #np.tan(alpha) * screen_x.get_value(),
                         0,
                     ]
                 )
@@ -73,10 +71,10 @@ class DoubleSlitFormula(ZoomedScene):
         A_label = always_redraw(lambda: MathTex("A").next_to(A_dot, RIGHT))
 
         a_k_brace = always_redraw(
-            lambda: BraceBetweenPoints(A_dot.get_center(), O_dot.get_center(), RIGHT)
-        ).shift(LEFT * 0.2)
+            lambda: BraceBetweenPoints(A_dot.get_center() + LEFT * 0.1, O_dot.get_center() + LEFT * 0.1, RIGHT)
+        )
         a_k_label = always_redraw(
-            lambda: MathTex(r"a_{k}").next_to(a_k_brace, RIGHT).shift(LEFT * 0.1)
+            lambda: MathTex(r"a_{k}").next_to(a_k_brace, RIGHT)
         )
 
         # F = A + (np.linalg.norm(S - A) / np.linalg.norm(T - A)) * (T - A)
@@ -116,16 +114,6 @@ class DoubleSlitFormula(ZoomedScene):
         tri_SF = always_redraw(
             lambda: DashedLine(start=S_dot.get_center(), end=F_dot.get_center())
         )
-        tri_SF_arc = always_redraw(
-            lambda: ArcBetweenPoints(
-                start=S_dot.get_center(),
-                end=F_dot.get_center(),
-                radius=np.linalg.norm(
-                    S_dot.get_center() - A_dot.get_center()
-                ),  # radius = |AS|
-            )
-        )
-        # tri_AF = Line(start=A, end=F, color=BLUE)
 
         # Strecke M-A mit Beschriftung m
         ray_MA = always_redraw(
@@ -168,7 +156,7 @@ class DoubleSlitFormula(ZoomedScene):
             )
         )
         TSF_label = always_redraw(
-            lambda: MathTex(r"\alpha").next_to(angle_TSF, RIGHT).shift(DOWN * 0.1)
+            lambda: MathTex(r"\alpha").next_to(angle_TSF, DOWN).shift(DOWN * 0.1)
         )
         angle_SAF = always_redraw(
             lambda: Angle(
@@ -180,8 +168,8 @@ class DoubleSlitFormula(ZoomedScene):
         SAF_label = always_redraw(
             lambda: MathTex(r"\sphericalangle SAF")
             .next_to(S_dot, RIGHT)
-            .shift(LEFT * 0.2)
-            .shift(DOWN * 0.1)
+            .shift(LEFT * 0.1)
+            .shift(DOWN * 0.2)
         )
         SAF_equals = always_redraw(
             (lambda: MathTex(r"\text{ } = \text{ }").next_to(SAF_label))
@@ -199,7 +187,7 @@ class DoubleSlitFormula(ZoomedScene):
             ).next_to(SAF_equals, RIGHT)
         )
         SAF_degree = always_redraw(
-            lambda: MathTex(r"{}^{\circ}").next_to(SAF_value, RIGHT, buff=0.1)
+            lambda: MathTex(r"^\circ").next_to(SAF_value, RIGHT, buff=0.1).shift(UP * 0.1)
         )
         SAF_label_group = always_redraw(
             lambda: VGroup(
@@ -212,15 +200,16 @@ class DoubleSlitFormula(ZoomedScene):
         )
 
         # Alle Elemente statisch hinzufügen
-        self.play(FadeIn(slit_line, S_dot, T_dot, screen_line, S_label, T_label))
+        self.play(Create(slit_line), Create(S_dot), Create(T_dot), Create(screen_line))
+        self.play(Write(S_label), Write(T_label))
         self.wait(1)
-        self.add(center_line, slit_screen_line_label)
+        self.play(Create(center_line), Write(slit_screen_line_label))
         self.wait(1)
-        self.add(g_label, g_arrow)
+        self.play(Write(g_label), Write(g_arrow))
         self.wait(1)
-        self.add(ray_T)
+        self.play(Create(ray_T))
         self.wait(1)
-        self.add(ray_S)
+        self.play(Create(ray_S))
         self.wait(1)
         # switch to non always_redraw lines to show rotation
         self.remove(ray_T, ray_S)
@@ -336,28 +325,24 @@ class DoubleSlitFormula(ZoomedScene):
             .shift(LEFT * 0.1)
             .shift(UP * 0.1)
         )
-        alpha_group = VGroup(alpha_short, alpha_val, alpha_end).next_to(g_label, LEFT)
 
         self.wait(1)
-        self.add(F_dot, F_label)
+        self.play(Create(F_dot), Write(F_label))
         self.wait(1)
-        self.add(delta_s, delta_s_label)
+        self.play(Create(delta_s), Write(delta_s_label))
         self.wait(1)
-        self.remove(static_ray_T, delta_s, static_ray_S)
-        self.add(ray_T, static_ray_S)
-        self.add(delta_s)
-        self.wait(1)
+        self.remove(static_ray_T, delta_s, static_ray_S, T_dot, F_dot)
+        self.add(ray_T, delta_s, static_ray_S, T_dot, F_dot)
         self.play(Rotate(static_ray_S, -angle_ST, about_point=A_dot.get_center()))
         self.remove(static_ray_S)
         self.add(ray_S)
-        self.add(A_dot)
-        self.add(A_label)
+        self.play(FadeIn(A_dot), Write(A_label))
         self.wait(1)
-        self.add(a_k_brace, a_k_label)
+        self.play(FadeIn(a_k_brace), Write(a_k_label))
         self.wait(1)
-        self.add(O_dot)
+        self.play(FadeIn(O_dot))
         self.wait(1)
-        self.add(tri_SF)
+        self.play(Create(tri_SF))
         self.wait(1)
         self.wait(1)
 
@@ -380,66 +365,96 @@ class DoubleSlitFormula(ZoomedScene):
         #
         #
 
-        self.add(SAF_label_group, SAF_value_group)
+        self.play(Write(SAF_label_group), Write(SAF_value_group))
         self.wait(1)
         self.camera.frame.save_state()
         self.wait(1)
-        self.play(self.camera.frame.animate.set(width=slit_line.get_length() * 2))
-        self.wait(1)
+
+        # Kein Updater für die Kamera!
+        camera_width = self.camera.frame.width
         self.play(
-            screen_x.animate.set_value(500), run_time=10, rate_func=linear
-        )  # BUG: that should exist according to https://docs.manim.community/en/stable/reference/manim.utils.rate_functions.html#module-manim.utils.rate_functions
-        self.wait(2)
-        self.remove(SAF_value_group, SAF_label_group)
+            self.camera.frame.animate.set(width=slit_line.get_length() * 10),
+            screen_x.animate.set_value(screen_x.get_value() + 50),
+            run_time=2,
+            rate_func = linear
+        )
+        #self.camera.frame.set_width(slit_line.get_length() * 10)
+        #screen_x.set_value(screen_x.get_value() + 50),
+        self.play(
+            screen_x.animate.set_value(screen_x.get_value() + 50),
+            run_time=4,
+            rate_func = lambda t: min(2*t, 1)
+        )
+        self.play(FadeOut(SAF_value_group, SAF_label_group))
+
+        # Draw angle arc at F between FA and FS, and a dot halfway between F and the arc (German/European style)
+        angle_AFS = always_redraw(lambda: Angle(
+            Line(F_dot.get_center(), A_dot.get_center()),
+            Line(F_dot.get_center(), S_dot.get_center()),
+            radius=0.5,
+            color=YELLOW
+        ))
+        dot_between = always_redraw(lambda: Dot(
+            (F_dot.get_center() + angle_AFS.point_from_proportion(0.5)) / 2,
+            color=YELLOW,
+            radius=0.06
+        ))
+        self.play(Create(angle_AFS), Create(dot_between))
         self.play(screen_x.animate.set_value(6), run_time=2, rate_func=linear)
-        self.play(self.camera.frame.animate.restore(), run_time=4)
+        #self.play(self.camera.frame.animate.restore(), run_time=2, rate_func=linear)
+        self.play(self.camera.frame.animate.set(width=camera_width), run_time=2, rate_func=linear)
         self.wait(1)
-        self.add(M_dot, ray_MA)
+        self.play(Write(M_dot), Create(ray_MA))
         self.wait(1)
-        self.play(FadeIn(triangle_FST))
+        self.play(Create(triangle_FST))
         self.wait(1)
-        self.add(angle_TSF, TSF_label)
+        self.play(Create(angle_TSF), Write(TSF_label))
         self.wait(1)
-        self.add(sin_alpha)
+        self.play(Write(sin_alpha))
         self.wait(1)
         self.play(FadeOut(triangle_FST))
         self.wait(2)
-        self.play(FadeIn(triangle_FSA))
+        self.play(Create(triangle_FSA))
         self.wait(1)
-        self.add(angle_AMO, AMO_label)
+        self.play(Create(angle_AMO), Write(AMO_label))
         self.wait(1)
-        self.add(tan_alpha)
+        self.play(Write(tan_alpha))
         self.wait(1)
         self.play(FadeOut(triangle_FSA))
         self.wait(5)
 
         # Formelzauberei am Ende
         # Alle bisherigen Elemente ausblenden
+        self.play(FadeOut(*self.mobjects))
+        self.wait(0.5)
 
-        # COMMENTED OUT FOR FASTER RENDERING
-        # self.play(FadeOut(Group(*self.mobjects)))
-        #
-        # # Fortlaufende Umformung
-        # umf1 = MathTex(r"\sin(\alpha) = \tan(\alpha)").scale(1.3).move_to(ORIGIN)
-        # self.play(Write(umf1))
-        # self.wait(1)
-        # umf2 = MathTex(r"\frac{\Delta s}{g} = \frac{a_k}{l}").scale(1.3).move_to(ORIGIN)
-        # self.play(TransformMatchingTex(umf1, umf2))
-        # self.wait(1)
-        # umf3 = MathTex(r"a_k = \frac{l \cdot \Delta s}{g}").scale(1.3).move_to(ORIGIN)
-        # self.play(TransformMatchingTex(umf2, umf3))
-        # self.wait(1)
-        # umf4 = (
-        #     MathTex(r"a_k = \frac{l \cdot k \cdot \lambda}{g}")
-        #     .scale(1.3)
-        #     .move_to(ORIGIN)
-        # )
-        # self.play(TransformMatchingTex(umf3, umf4))
-        # self.wait(1)
-        # umf5 = (
-        #     MathTex(r"\lambda = \frac{a_k \cdot g}{l \cdot k}")
-        #     .scale(1.3)
-        #     .move_to(ORIGIN)
-        # )
-        # self.play(TransformMatchingTex(umf4, umf5))
-        # self.wait(3)
+        # Formelkette
+        formel1 = MathTex(r"\sin(\alpha) = \tan(\alpha)").scale(1.3).move_to(ORIGIN)
+        formel2 = MathTex(r"\frac{\Delta s}{g}", r"=", r"\frac{a_k}{l}").scale(1.3).move_to(ORIGIN)
+        formel3 = MathTex(r"a_k", r"=", r"\frac{l \cdot \Delta s}{g}").scale(1.3).move_to(ORIGIN)
+        formel4 = MathTex(r"a_k", r"=", r"\frac{l \cdot k \cdot \lambda}{g}").scale(1.3).move_to(ORIGIN)
+        formel5 = MathTex(r"\lambda", r"=", r"\frac{a_k \cdot g}{l \cdot k}").scale(1.3).move_to(ORIGIN)
+        formel6 = MathTex(r"\lambda", r"=", r"\frac{90cm \cdot 0.05mm}{7m \cdot 10}").scale(1.3).move_to(ORIGIN)
+        formel7 = MathTex(r"\lambda", r"=", r"643 nm").scale(1.3).move_to(ORIGIN)
+
+        self.play(Write(formel1))
+        self.wait(1)
+        self.play(Transform(formel1, formel2))
+        self.wait(1)
+        self.remove(formel1)
+        self.play(Transform(formel2, formel3))
+        self.wait(1)
+        self.remove(formel2)
+        self.play(Transform(formel3, formel4))
+        self.wait(1)
+        self.remove(formel3)
+        self.play(Transform(formel4, formel5))
+        self.wait(1)
+        self.remove(formel4)
+        self.play(Transform(formel5, formel6))
+        self.wait(1)
+        self.remove(formel5)
+        self.play(Transform(formel6, formel7))
+        self.wait(2)
+
+        # Draw angle arc at S between TS and FS, and a dot halfway between S and the arc (German/European style)
